@@ -2011,18 +2011,39 @@ class Component extends DCLogic {
     const d = new Date((c.date || '') + 'T00:00:00');
     const md = isNaN(d) ? '' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     const dept = (c.dept && c.dept !== 'None') ? c.dept : (c.title || '');
-    if (c.type === 'anniversary') return (c.years === 1 ? '1 year' : c.years + ' years') + (dept ? ' · ' + dept : '');
+    if (c.type === 'anniversary') return (c.years === 1 ? '1 year' : c.years + ' years') + (md ? ' · ' + md : '') + (dept ? ' · ' + dept : '');
+    if (c.type === 'birthday') return 'Happy birthday!' + (md ? ' · ' + md : '');
     return (dept ? 'Joined ' + dept : 'New hire') + (md ? ' · ' + md : '');
+  }
+  // Rolling window so the section never shows a stale month: yesterday → 30 days out,
+  // year-agnostic for birthdays/anniversaries (Bamboo sends the original date for those).
+  _celebDate(c) {
+    const raw = (c.date || '').trim(); if (!raw) return null;
+    const d = new Date(raw + 'T00:00:00'); if (isNaN(d)) return null;
+    if (c.type === 'birthday' || c.type === 'anniversary') {
+      const now = new Date(); now.setHours(0, 0, 0, 0);
+      let occ = new Date(now.getFullYear(), d.getMonth(), d.getDate());
+      if (occ < new Date(now.getTime() - 864e5)) occ = new Date(now.getFullYear() + 1, d.getMonth(), d.getDate());
+      return occ;
+    }
+    return d;
   }
   _milestones() {
     const list = [];
     if (this.state.completed && this.state.completed['onboarding-90day']) {
       list.push({ emoji: '🎓', tag: '90-day grad', name: this.USER.name, sub: 'Completed the 90-Day Journey · just now', src: 'hub' });
     }
-    const bam = (this.state.bamboo && this.state.bamboo.celebrations) || [];
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    const from = new Date(now.getTime() - 864e5), to = new Date(now.getTime() + 30 * 864e5);
+    const bam = ((this.state.bamboo && this.state.bamboo.celebrations) || [])
+      .map(c => ({ c, when: this._celebDate(c) }))
+      .filter(x => x.when && x.when >= from && x.when <= to)
+      .sort((a, b) => a.when - b.when)
+      .map(x => x.c);
     if (bam.length) {
       bam.slice(0, 8).forEach(c => {
-        if (c.type === 'anniversary') list.push({ emoji: '🎂', tag: 'Work anniversary', name: c.name, sub: this._fmtHireSub(c), src: 'bamboo' });
+        if (c.type === 'anniversary') list.push({ emoji: '🎉', tag: 'Work anniversary', name: c.name, sub: this._fmtHireSub(c), src: 'bamboo' });
+        else if (c.type === 'birthday') list.push({ emoji: '🎂', tag: 'Birthday', name: c.name, sub: this._fmtHireSub(c), src: 'bamboo' });
         else list.push({ emoji: '👋', tag: 'New hire', name: c.name, sub: this._fmtHireSub(c), src: 'bamboo' });
       });
       return list;
