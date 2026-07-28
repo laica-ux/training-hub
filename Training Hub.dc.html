@@ -494,9 +494,14 @@
               <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:22px;">
                 <sc-for list="{{ g.videos }}" as="v" hint-placeholder-count="3">
                   <div style="flex:0 1 calc(33.333% - 15px);min-width:200px;">
-                    <sc-if value="{{ v.playing }}">
+                    <sc-if value="{{ v.playingYt }}">
                       <div style="position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 8px 22px -10px rgba(20,22,28,0.35);">
                         <iframe src="{{ v.embed }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ v.playingDrive }}">
+                      <div style="position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 8px 22px -10px rgba(20,22,28,0.35);">
+                        <iframe src="{{ v.embed }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="position:absolute;top:-31%;left:-6%;width:112%;height:166%;border:none;"></iframe>
                       </div>
                     </sc-if>
                     <sc-if value="{{ v.notPlaying }}">
@@ -1949,6 +1954,7 @@ class Component extends DCLogic {
           embed: isDrive ? ('https://drive.google.com/file/d/' + it.driveId + '/preview') : ('https://www.youtube-nocookie.com/embed/' + it.id + '?autoplay=1&rel=0'),
           playEl: this.ic('play', '#ffffff', 22),
           playing: playing === vid, notPlaying: playing !== vid,
+          playingYt: playing === vid && !isDrive, playingDrive: playing === vid && isDrive,
           onPlay: () => this.setState({ culturePlaying: vid }),
         };
       });
