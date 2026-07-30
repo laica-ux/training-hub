@@ -2086,6 +2086,7 @@ class Component extends DCLogic {
         if (data.custom && typeof data.custom === 'object') this._saveCustom(data.custom);
         if (data.quizzes && typeof data.quizzes === 'object') this._saveQuizOverrides(data.quizzes);
         if (Array.isArray(data.shoutouts) && data.shoutouts.length) { this._saveShoutouts(data.shoutouts); this.setState({ shoutouts: data.shoutouts }); }
+        if (Array.isArray(data.feedback)) this._saveFeedback(data.feedback);
         this._D = null;
         this.setState({ syncState: 'ok', syncedAt: data.updatedAt || new Date().toISOString(), syncBy: data.updatedBy || '' });
       } else { this.setState({ syncState: 'ok' }); }
@@ -2093,7 +2094,7 @@ class Component extends DCLogic {
   }
   _pushContent() {
     const url = this._syncUrl(); if (!url) return false;
-    const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
+    const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], feedback: this._feedback(), updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
     this.setState({ syncState: 'pushing' });
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload, keepalive: true })
       .then(() => this.setState({ syncState: 'ok', syncedAt: new Date().toISOString() }))
@@ -2102,13 +2103,32 @@ class Component extends DCLogic {
   }
 
   // ---------- lesson feedback ----------
+  // Merge-safe write to the shared store: re-read it first, then post back with only the
+  // feedback list changed. A member submitting feedback must never overwrite admin content.
+  _syncFeedback(mutate) {
+    const url = this._syncUrl(); if (!url) return;
+    fetch(url, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null)              // null = read FAILED (never treat as an empty store)
+      .then(data => {
+      // Abort on a failed read. Posting a skeleton here would whole-file-replace the store
+      // and wipe every admin course, quiz, and shoutout for everyone.
+      if (!data || typeof data !== 'object') return;
+      const base = data;
+      const merged = mutate(Array.isArray(base.feedback) ? base.feedback : []);
+      this._saveFeedback(merged);
+      base.feedback = merged;
+      base.updatedAt = new Date().toISOString();
+      return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(base), keepalive: true });
+    }).then(() => this.forceUpdate()).catch(() => {});
+  }
   _feedback() { try { return JSON.parse(localStorage.getItem(this.FKEY) || '[]') || []; } catch (e) { return []; } }
   _saveFeedback(arr) { try { localStorage.setItem(this.FKEY, JSON.stringify(arr)); } catch (e) {} }
   addFeedback(deptId, courseId, lessonId, lessonTitle) {
     const text = (this.state.fbText || '').trim(); if (!text) return;
-    const arr = this._feedback();
-    arr.unshift({ id: 'fb-' + Date.now().toString(36), deptId, courseId, lessonId, lessonTitle, type: 'feedback', text, author: this.USER.name, slack: this.USER.slack, ts: Date.now() });
-    this._saveFeedback(arr);
+    const rec = { id: 'fb-' + Date.now().toString(36), deptId, courseId, lessonId, lessonTitle, type: 'feedback', text, author: this.USER.name, email: this.USER.email, slack: this.USER.slack, ts: Date.now() };
+    this._saveFeedback([rec].concat(this._feedback()));
+    this._syncFeedback(list => [rec].concat(list.filter(f => f.id !== rec.id)));
     // localStorage is per-browser, so also push it out the webhook or nobody but this user ever sees it
     const d = this._dept(deptId), c = this._course(d, courseId);
     this._postToSlack({
@@ -2119,9 +2139,10 @@ class Component extends DCLogic {
     });
     this.setState({ fbText: '', fbSent: lessonId });
   }
-  resolveFeedback(id) { this._saveFeedback(this._feedback().filter(f => f.id !== id)); this.forceUpdate(); }
+  resolveFeedback(id) { this._saveFeedback(this._feedback().filter(f => f.id !== id)); this._syncFeedback(list => list.filter(f => f.id !== id)); this.forceUpdate(); }
   resolveAndEdit(f) {
     this._saveFeedback(this._feedback().filter(x => x.id !== f.id));
+    this._syncFeedback(list => list.filter(x => x.id !== f.id));
     const d = this._dept(f.deptId), c = this._course(d, f.courseId);
     const l = c && c.lessons.find(x => x.id === f.lessonId);
     this.setState({ fbOpen: false }, () => { if (l) this.editLesson(f.deptId, f.courseId, l); });
