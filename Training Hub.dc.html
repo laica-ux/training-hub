@@ -1559,6 +1559,17 @@ class Component extends DCLogic {
     // Apps Script forwarder → Slack workflows (SOS + GFF). Default for all users; the admin
     // Slack panel can still override it per browser.
     this.SLACK_FORWARD_URL = 'https://script.google.com/macros/s/AKfycbyvEtL0HCswXs03v2lM34DLpTJJUMiB7NdEPqzbO9r_TlzyRNUePFgQ0oSx5iDd8mLZ/exec';
+    // Only the live domain notifies the team. Anywhere else (previews, localhost, Vercel
+    // preview URLs, opened-from-disk) is a test: it posts to TEST_FORWARD_URL if one is set,
+    // otherwise it stays silent. Prevents test alerts DMing the whole admin list.
+    // Exact production aliases only — Vercel *preview* deploys also end in .vercel.app,
+    // so a suffix test would wrongly treat them as live.
+    this.PROD_HOSTS = ['training-hub.getfoundfirst.com', 'www.training-hub.getfoundfirst.com', 'training-hub-sepia.vercel.app'];
+    // Same workflow as production, just prefixed [TEST] in the title so it's obvious.
+    this.TEST_FORWARD_URL = this.SLACK_FORWARD_URL;
+    this.IS_PROD = (function (hosts) {
+      try { return hosts.indexOf(location.hostname) >= 0; } catch (e) { return false; }
+    })(this.PROD_HOSTS);
     this.FKEY = 'sosgff_feedback_v1';
     this.AUTHKEY = 'sosgff_auth_v1';
     this.SKEY = 'sosgff_slack_v1';
@@ -1736,8 +1747,15 @@ class Component extends DCLogic {
   _postToSlack(payload) {
     // Baked-in forwarder so alerts work for every employee with zero per-browser setup.
     // (localStorage is per-profile — an admin's saved webhook never reaches anyone else.)
-    const url = (this._slackCfg().postWebhook || this.SLACK_FORWARD_URL || '').trim();
+    const cfgUrl = (this._slackCfg().postWebhook || '').trim();
+    // Off the live domain, never touch the team's workflow — test route or nothing.
+    const url = this.IS_PROD ? (cfgUrl || this.SLACK_FORWARD_URL || '') : (this.TEST_FORWARD_URL || '').trim();
     if (!url) return false;
+    // Mark BOTH fields — most workflow steps render only `text`, so a title-only prefix is invisible.
+    if (!this.IS_PROD) payload = Object.assign({}, payload, {
+      title: '[TEST] ' + (payload.title || ''),
+      text: '[TEST — ignore] ' + (payload.text || '')
+    });
     try {
       const body = 'payload=' + encodeURIComponent(JSON.stringify(payload))
         + '&title=' + encodeURIComponent(payload.title || '')
@@ -1773,7 +1791,9 @@ class Component extends DCLogic {
     clearTimeout(this._toastT);
     this._toastT = setTimeout(() => this.setState(s => (s.slackToast && s.slackToast.id === alert.id) ? { slackToast: null } : {}), 6500);
   }
-  sendTestSlack() { this.fireSlack('lesson', '“When to Use AI Max, PMax & Demand Gen” was published in the PPC track.'); }
+  // Self-marking regardless of host — otherwise a connectivity check from production reads as a
+  // real publish announcement to every admin, for a lesson that doesn't exist.
+  sendTestSlack() { this.fireSlack('lesson', '[TEST — ignore] Connection check from the Training Hub. No new lesson was published.'); }
 
   // ---------- shoutouts ----------
   toggleShoutout() { this.setState(s => ({ shoutoutOpen: !s.shoutoutOpen, shoutoutText: '', shoutFrom: '', shoutTo: '' })); }
@@ -2106,6 +2126,9 @@ class Component extends DCLogic {
   // Merge-safe write to the shared store: re-read it first, then post back with only the
   // feedback list changed. A member submitting feedback must never overwrite admin content.
   _syncFeedback(mutate) {
+    // Off the live domain, keep it local — test submissions must not land in the real
+    // shared store, where they'd show up in every admin's inbox.
+    if (!this.IS_PROD) return;
     const url = this._syncUrl(); if (!url) return;
     fetch(url, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : null)
