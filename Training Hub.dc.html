@@ -392,7 +392,7 @@
 
         <!-- start here · new-hire path -->
         <div style="position:relative;overflow:hidden;background:radial-gradient(680px 280px at 8% -30%, #e6edff 0%, rgba(230,237,255,0) 58%), linear-gradient(118deg,#edf0f8 0%,#f4f0e8 100%);border:1px solid #e3e2dc;border-radius:20px;padding:30px 32px;margin-bottom:44px;">
-          <div style="position:relative;display:grid;grid-template-columns:300px 1fr;gap:38px;align-items:center;">
+          <div style="position:relative;display:grid;grid-template-columns:300px minmax(0,1fr);gap:38px;align-items:center;">
             <div>
               <div style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #dde3f1;border-radius:30px;padding:5px 13px;margin-bottom:16px;box-shadow:0 2px 7px -3px rgba(20,22,40,0.18);">
                 <span style="width:7px;height:7px;border-radius:50%;background:#3b6cf5;"></span>
@@ -402,7 +402,7 @@
               <p style="font-size:15px;color:#6b6f76;margin:0 0 22px;line-height:1.5;text-wrap:pretty;">A short path to find your footing — <span style="white-space:nowrap;">{{ startHereCount }} lessons,</span> about <span style="white-space:nowrap;">{{ startHereMinutes }} min total.</span></p>
               <div onClick="{{ startPathAction }}" style="display:inline-flex;align-items:center;gap:9px;background:#3b6cf5;color:#fff;border-radius:11px;padding:12px 20px;font-family:'Schibsted Grotesk',sans-serif;font-weight:600;font-size:15px;cursor:pointer;transition:background .15s;" style-hover="background:#2f5be0;"><span>Start the path</span>{{ arrowIcon }}</div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;">
               <sc-for list="{{ startHere }}" as="s" hint-placeholder-count="6">
                 <div onClick="{{ s.onClick }}" style="display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #e6e4de;border-radius:12px;padding:12px 15px;cursor:pointer;transition:box-shadow .14s,transform .12s,border-color .14s;" style-hover="border-color:#c7c5bd;box-shadow:0 8px 20px -10px rgba(20,22,28,0.22);transform:translateY(-2px);">
                   <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:21px;color:{{ s.tint }};width:24px;text-align:center;flex:none;">{{ s.num }}</span>
@@ -1556,6 +1556,9 @@ class Component extends DCLogic {
     // Progress store (Apps Script) — a map keyed by work email → { done, total, pct, name, lastActive }.
     // Each user pushes their own record; reporting reads the whole map and matches to the BambooHR roster by email.
     this.PROGRESS_URL = 'https://script.google.com/macros/s/AKfycbwoYqKQwvsPnNlF6ySgzzT_UUoOkDrHAYsTru4RIQx27vm-NokzkQZz8VwFktRJowO4VA/exec';
+    // Apps Script forwarder → Slack workflows (SOS + GFF). Default for all users; the admin
+    // Slack panel can still override it per browser.
+    this.SLACK_FORWARD_URL = 'https://script.google.com/macros/s/AKfycbyvEtL0HCswXs03v2lM34DLpTJJUMiB7NdEPqzbO9r_TlzyRNUePFgQ0oSx5iDd8mLZ/exec';
     this.FKEY = 'sosgff_feedback_v1';
     this.AUTHKEY = 'sosgff_auth_v1';
     this.SKEY = 'sosgff_slack_v1';
@@ -1731,8 +1734,10 @@ class Component extends DCLogic {
   setSlackWebhook(v) { const c = this._slackCfg(); c.postWebhook = this._str(v); this._saveSlack(c); this.forceUpdate(); }
   setShoutoutsFeed(v) { const c = this._slackCfg(); c.shoutoutsFeedUrl = this._str(v); this._saveSlack(c); this._fetchShoutouts(); this.forceUpdate(); }
   _postToSlack(payload) {
-    const url = (this._slackCfg().postWebhook || '').trim();
-    if (!url) return false;                                   // no endpoint set → stays a local-only demo
+    // Baked-in forwarder so alerts work for every employee with zero per-browser setup.
+    // (localStorage is per-profile — an admin's saved webhook never reaches anyone else.)
+    const url = (this._slackCfg().postWebhook || this.SLACK_FORWARD_URL || '').trim();
+    if (!url) return false;
     try {
       const body = 'payload=' + encodeURIComponent(JSON.stringify(payload))
         + '&title=' + encodeURIComponent(payload.title || '')
@@ -2104,6 +2109,14 @@ class Component extends DCLogic {
     const arr = this._feedback();
     arr.unshift({ id: 'fb-' + Date.now().toString(36), deptId, courseId, lessonId, lessonTitle, type: 'feedback', text, author: this.USER.name, slack: this.USER.slack, ts: Date.now() });
     this._saveFeedback(arr);
+    // localStorage is per-browser, so also push it out the webhook or nobody but this user ever sees it
+    const d = this._dept(deptId), c = this._course(d, courseId);
+    this._postToSlack({
+      title: 'Lesson feedback: ' + lessonTitle,
+      text: '*' + this.USER.name + '* (' + this.USER.email + ') left feedback on *' + lessonTitle + '*'
+        + ((d && c) ? ' _(' + d.name + ' › ' + c.title + ')_' : '') + '\n> ' + text,
+      channels: '', recipients: this.USER.slack || ''
+    });
     this.setState({ fbText: '', fbSent: lessonId });
   }
   resolveFeedback(id) { this._saveFeedback(this._feedback().filter(f => f.id !== id)); this.forceUpdate(); }
