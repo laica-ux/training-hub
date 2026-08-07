@@ -522,7 +522,7 @@
               <sc-for list="{{ topElevators }}" as="e" hint-placeholder-count="3">
                 <div>
                   <sc-if value="{{ e.isFirst }}">
-                    <div style="position:relative;overflow:hidden;border-radius:18px;border:1px solid #e3c98a;background:linear-gradient(168deg,#fdf6e6 0%,#fffdf8 62%);padding:26px 22px 24px;text-align:center;box-shadow:0 14px 32px -20px rgba(150,110,20,0.55);">
+                    <div style="position:relative;overflow:hidden;border-radius:18px;border:1px solid #e3c98a;background:linear-gradient(168deg,#fdf6e6 0%,#fffdf8 62%);padding:26px 22px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;box-shadow:0 14px 32px -20px rgba(150,110,20,0.55);">
                       <div style="font-size:34px;line-height:1;margin-bottom:10px;">{{ e.medal }}</div>
                       <div style="font-size:11px;font-weight:800;letter-spacing:.12em;color:#b08a2c;text-transform:uppercase;margin-bottom:8px;">{{ e.ordinal }} place</div>
                       <div style="display:inline-block;background:linear-gradient(120deg,#f6c85a 0%,#e8a92e 100%);border-radius:10px;padding:8px 18px;box-shadow:0 8px 18px -10px rgba(150,110,20,0.75);">
@@ -535,7 +535,7 @@
                     </div>
                   </sc-if>
                   <sc-if value="{{ e.notFirst }}">
-                    <div style="border-radius:16px;border:1px solid #dfe1e8;background:linear-gradient(165deg,#f4f5f9 0%,#ffffff 72%);padding:20px 18px 18px;text-align:center;">
+                    <div style="border-radius:16px;border:1px solid #dfe1e8;background:linear-gradient(165deg,#f4f5f9 0%,#ffffff 72%);padding:20px 18px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;">
                       <div style="font-size:26px;line-height:1;margin-bottom:8px;">{{ e.medal }}</div>
                       <div style="font-size:10.5px;font-weight:800;letter-spacing:.12em;color:#a2a5ab;text-transform:uppercase;margin-bottom:7px;">{{ e.ordinal }} place</div>
                       <div style="display:inline-block;background:#e9ebf2;border:1px solid #dcdfe8;border-radius:9px;padding:6px 14px;">
@@ -2316,14 +2316,19 @@ class Component extends DCLogic {
   _topElevators() {
     const pmap = this.state.progressMap || {};
     const roster = (this.state.bamboo && this.state.bamboo.roster) || [];
-    const deptOf = {};
-    roster.forEach(r => { const e = ((r.email || r.workEmail || '') + '').toLowerCase().trim(); if (e) deptOf[e] = r.department || r.dept || ''; });
+    const deptOf = {}, nameOf = {};
+    roster.forEach(r => { const e = ((r.email || r.workEmail || '') + '').toLowerCase().trim(); if (e) { deptOf[e] = r.department || r.dept || ''; nameOf[e] = (r.name || '').trim(); } });
+    const rosterKnown = Object.keys(nameOf).length > 0;
     let rows = Object.keys(pmap).map(email => {
+      const key = email.toLowerCase().trim();
       const rec = pmap[email] || {};
-      const nm = (rec.name || '').trim() || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const d = deptOf[email.toLowerCase()] || '';
-      return { email: email, name: nm, done: Number(rec.done || 0), total: Number(rec.total || 0), dept: (d && d !== 'None') ? d : '' };
-    }).filter(r => r.done > 0);
+      // Roster name wins over any self-reported name so the board can't show a stray alias.
+      const nm = nameOf[key] || (rec.name || '').trim() || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const d = deptOf[key] || '';
+      return { email: key, name: nm, done: Number(rec.done || 0), total: Number(rec.total || 0), dept: (d && d !== 'None') ? d : '', onRoster: !!nameOf[key] };
+    }).filter(r => r.done > 0)
+      // Once the roster has loaded, only real employees can appear (drops test/personal sign-ins).
+      .filter(r => !rosterKnown || r.onRoster);
     rows.sort((a, b) => b.done - a.done || a.name.localeCompare(b.name));
     // Preview board: until real completions land in the progress store, show a sample
     // trio (flagged SAMPLE in the UI) so the section can be demoed.
@@ -3091,6 +3096,11 @@ class Component extends DCLogic {
             return Object.assign(base2, { pct: pct, pctLabel: (rec.done || 0) + '/' + rec.total, barColor: pct >= 100 ? '#2f9e5e' : pct >= 50 ? '#3b6cf5' : '#e08a1e', statusLabel: status.l, statusBg: status.bg, statusColor: status.c, _pct: pct, _started: pct > 0 });
           }
           return Object.assign(base2, { pct: 0, pctLabel: progressLive ? '0/—' : '—', barColor: '#e6e4de', statusLabel: 'Not started', statusBg: '#f3f2ec', statusColor: '#9a9da3', _pct: 0, _started: false });
+        });
+        // Sort the roster so the people actually logging time on the hub sit at the top.
+        rowsB.sort((a, b) => {
+          const ad = Number((a.pctLabel || '').split('/')[0]) || 0, bd = Number((b.pctLabel || '').split('/')[0]) || 0;
+          return (b._pct - a._pct) || (bd - ad) || a.name.localeCompare(b.name);
         });
         const deptCount = {}; rowsB.forEach(r => { deptCount[r.trackName] = (deptCount[r.trackName] || 0) + 1; });
         const started = rowsB.filter(r => r._started).length;

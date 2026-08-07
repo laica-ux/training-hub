@@ -287,8 +287,8 @@ window.HUB_DATA = (function () {
         ]},
         { id: "trainer-resources", title: "Trainer Resources", summary: "How to prep, deliver, and improve a great live training.", lessons: [
           Object.assign(L("trainer-expectations", "What We Expect from Trainers", 4, "article", "The baseline standards every trainer is held to when leading a session.", null), { trainerMaterials: [
-            { type: "deck", title: "Trainer Facilitation Deck", url: "https://drive.google.com/drive/folders/1jFa6W2xBgnxYqEdAZ9g_GTDaqknz4otr" },
-            { type: "guide", title: "Session Run-of-Show & Script", url: "https://drive.google.com/drive/folders/1jFa6W2xBgnxYqEdAZ9g_GTDaqknz4otr" },
+            { type: "deck", title: "Trainer Facilitation Deck", url: "" },
+            { type: "guide", title: "Session Run-of-Show & Script", url: "" },
           ] }),
           L("trainer-prep", "Prep & Refresh Before You Deliver", 4, "checklist", "How to review, audit, and tech-check a lesson before you teach it.", null),
           L("trainer-delivery", "Delivery & Troubleshooting", 5, "article", "Engaging adult learners and handling a room that's losing energy.", null),
@@ -307,6 +307,11 @@ window.HUB_DATA = (function () {
           L("flywheel-friction", "Flywheel & Friction", 5, "article", "Leadership training on building momentum and removing friction.", null),
         ]},
         { id: "leadership", title: "Leadership Development", summary: "For team leads, managers, and anyone on a leadership track.", lessons: [
+          Object.assign(L("first-90-days", "Your First 90 Days as a Leader", 12, "article", "A structured plan for the first 90 days in a leadership role.", null), { link: "https://docs.google.com/document/d/1bTYpLK76P1OXiBLPPIh1_z7iqDxzY-zVvGVbuiTDtLs/edit?usp=sharing", linkType: "doc", deepTitle: "Go deeper — First 90 Days checklist in Drive", resources: [
+            { type: "deck", title: "Your First 90 Days — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1qzIzzaDcgCW1kgsW95nn43oMnOE6Tc2oYQzbN4EZKfA/edit?usp=sharing" },
+          ] }),
+          Object.assign(L("becoming-a-manager", "Becoming a Manager That Elevates", 12, "article", "Making the shift from doing the work to leading the people who do it.", null), { link: "https://docs.google.com/document/d/1P7GtrfU-TjuDoutQom-liblbEDDM1Hpwx7azQijUPbI/edit?usp=sharing", linkType: "doc" }),
+          Object.assign(L("leadership-checklist", "Leadership 101 Starter Checklist", 6, "checklist", "The running checklist leaders use to stay on top of their team and cadence.", null), { link: "https://docs.google.com/document/d/1n3DiSkCpn5YLpfI6qDrZUXPac7ciimOxBye6bnhfEMM/edit?usp=sharing", linkType: "doc" }),
           L("outward-mindset", "The Outward Mindset", 9, "video", "Seeing beyond yourself — the Arbinger framework for working with others.", null),
           Object.assign(L("emotional-intelligence", "Emotional Intelligence", 11, "article", "Perceiving and managing emotions to navigate work and relationships.", null), { trainerMaterials: [
             { type: "deck", title: "Emotional Intelligence — Slide Deck", url: "https://docs.google.com/presentation/d/1S69Nc1YaXANsUXB4hyDxoY0RPejNeoUV2Q__fPB0ToQ/edit?usp=drive_link" },
@@ -1237,6 +1242,36 @@ window.HUB_DATA = (function () {
           ]),
         ]},
         { id: "ppc-automation", title: "Automation & Tools", summary: "Automated assets, GA4 setup, and conversion tracking for calls, forms, and enhanced conversions.", lessons: [
+          Object.assign(L("auto-google-ads-editor", "Google Ads Editor", 8, "video", "The free desktop tool for bulk edits, offline work, and reviewing changes before they go live.", [
+            { type: "p", text: "Google Ads Editor is a free, downloadable desktop app for making bulk edits and working offline. It's the fastest way to manage large accounts — you download an account, make sweeping changes locally, review them, then post them back to Google Ads." },
+            { type: "h", text: "Why we use it" },
+            { type: "list", items: [
+              "Work offline — make changes without an internet connection.",
+              "Bulk editing — modify thousands of ads, keywords, and settings at once.",
+              "Faster navigation — quickly filter, copy, and apply changes.",
+              "Draft & review before publishing — catch costly mistakes before they go live.",
+            ] },
+            { type: "h", text: "Navigating the interface" },
+            { type: "list", items: [
+              "Application menu — import/export, tools, and settings.",
+              "Toolbar — open accounts, download recent changes, and post changes.",
+              "Left sidebar — campaign and ad group tree view, plus the type list (campaigns, ad groups, audiences, keywords, etc.).",
+              "Data view — the currently selected content.",
+              "Edit panel — the fields you actually edit.",
+            ] },
+            { type: "h", text: "Key features" },
+            { type: "list", items: [
+              "Downloading & uploading accounts — syncing with Google Ads.",
+              "Bulk editing — adjust bids, update URLs, change ad copy.",
+              "Find & replace — modify multiple elements at once.",
+              "Copy & paste across campaigns — duplicate ads, keywords, and settings.",
+              "Undo & redo — safely test changes.",
+              "Posting changes — applying updates to live accounts.",
+            ] },
+            { type: "callout", tone: "tip", title: "Before you post", text: "Always download recent changes first so you're not overwriting someone else's work, then review your full change list before hitting Post." },
+            { type: "h", text: "Think about it" },
+            { type: "p", text: "When would bulk editing save you the most time in the accounts you manage today?" },
+          ]), { link: "https://docs.google.com/presentation/d/1dkepWIasVHL1-Hkk7-j-0ULAzC7Oa0HBJQKn6OwvzbE/edit?usp=sharing", linkType: "slides" }),
           L("auto-extensions", "Automated Extensions", 7, "video", "What automated assets are, why we often turn them off, and how to do it in the 2025 UI.", [
             { type: "h", text: "What are automated extensions?" },
             { type: "p", text: "Automated assets in Google Ads can give you more robust ads and more chances to win new customers. When an automated asset is predicted to improve your ad's performance, Google Ads automatically creates and shows it below your ad. Most are eligible across all ad types, though some show only on desktop and laptop." },
