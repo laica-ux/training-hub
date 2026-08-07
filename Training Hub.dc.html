@@ -226,22 +226,37 @@
           <div style="position:absolute;top:48px;right:0;width:372px;background:#fff;border:1px solid #e6e4de;border-radius:14px;box-shadow:0 18px 50px -16px rgba(20,22,28,0.42);z-index:60;overflow:hidden;">
             <div style="padding:13px 16px;border-bottom:1px solid #f0efea;display:flex;align-items:center;justify-content:space-between;">
               <span style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14.5px;color:#16181d;">Notifications</span>
-              <span style="font-size:12.5px;color:#9a9da3;">{{ fbCountLabel }} to action</span>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:12.5px;color:#9a9da3;">{{ fbCountLabel }} to action</span>
+                <span onClick="{{ refreshFb }}" title="Pull the latest feedback" style="font-size:12px;font-weight:700;color:#3b6cf5;cursor:pointer;" style-hover="color:#2f5be0;">Refresh</span>
+              </div>
             </div>
             <div style="max-height:62vh;overflow-y:auto;">
               <sc-for list="{{ fbItems }}" as="f" hint-placeholder-count="2">
-                <div style="padding:14px 16px;border-bottom:1px solid #f4f3ee;">
+                <div style="padding:14px 16px;border-bottom:1px solid #f4f3ee;background:{{ f.cardBg }};">
+                  <sc-if value="{{ f.isClaimed }}">
+                    <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;background:#e4f4ea;border:1px solid #cbe8d7;border-radius:8px;padding:6px 10px;min-width:0;">
+                      <span style="width:7px;height:7px;border-radius:50%;background:#2f9e5e;flex:none;"></span>
+                      <span style="font-size:12px;font-weight:700;color:#237a48;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.claimLine }}</span>
+                      <sc-if value="{{ f.canRelease }}">
+                        <span onClick="{{ f.onRelease }}" style="flex:none;font-size:11.5px;font-weight:700;color:#7b7f86;cursor:pointer;white-space:nowrap;" style-hover="color:#e0644a;">Release</span>
+                      </sc-if>
+                    </div>
+                  </sc-if>
                   <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;white-space:nowrap;">
                     <span style="font-size:10.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:{{ f.typeColor }};white-space:nowrap;">{{ f.typeLabel }}</span>
                     <span style="font-size:12px;color:#b4b7bc;white-space:nowrap;">· {{ f.ago }}</span>
                   </div>
                   <div style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:14px;color:#16181d;margin-bottom:3px;">{{ f.lessonTitle }}</div>
                   <div style="font-size:13.5px;color:#56595f;line-height:1.45;margin-bottom:10px;">{{ f.text }}</div>
-                  <div style="display:flex;align-items:center;gap:8px;">
-                    <div onClick="{{ f.onAction }}" style="display:flex;align-items:center;gap:6px;background:#3b6cf5;color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Schibsted Grotesk',sans-serif;transition:background .15s;" style-hover="background:#2f5be0;">Action &amp; edit</div>
-                    <div onClick="{{ f.onDismiss }}" style="font-size:12.5px;color:#9a9da3;font-weight:600;cursor:pointer;padding:7px 6px;transition:color .15s;" style-hover="color:#e0644a;">Dismiss</div>
-                    <span style="margin-left:auto;font-size:12px;color:#9a9da3;white-space:nowrap;font-weight:600;">{{ f.authorLine }}</span>
+                  <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                    <div onClick="{{ f.onAction }}" style="display:flex;align-items:center;gap:6px;flex:none;white-space:nowrap;background:#3b6cf5;color:#fff;border-radius:8px;padding:7px 13px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Schibsted Grotesk',sans-serif;transition:background .15s;" style-hover="background:#2f5be0;">Action &amp; edit</div>
+                    <sc-if value="{{ f.notClaimed }}">
+                      <div onClick="{{ f.onClaim }}" style="display:flex;align-items:center;gap:6px;flex:none;white-space:nowrap;background:#fff;border:1px solid #cbd3e2;color:#3b6cf5;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'Schibsted Grotesk',sans-serif;transition:background .15s;" style-hover="background:#eef2fe;">I'm on it</div>
+                    </sc-if>
+                    <div onClick="{{ f.onDismiss }}" style="font-size:12.5px;color:#9a9da3;font-weight:600;cursor:pointer;padding:7px 6px;flex:none;white-space:nowrap;transition:color .15s;" style-hover="color:#e0644a;">Dismiss</div>
                   </div>
+                  <div style="margin-top:7px;font-size:12px;color:#9a9da3;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.authorLine }}</div>
                 </div>
               </sc-for>
               <sc-if value="{{ noFbItems }}">
@@ -1952,6 +1967,8 @@ class Component extends DCLogic {
     this._loadShoutouts();
     this._fetchShoutouts();
     this._shoutoutT = setInterval(() => this._fetchShoutouts(), 90000);
+    // Pick up other admins' claims without a manual refresh.
+    this._contentT = setInterval(() => { if (!document.hidden) this._pullContent(); }, 60000);
     if (!window.HUB_DATA) {
       this._poll = setInterval(() => {
         if (window.HUB_DATA) { clearInterval(this._poll); this.setState({ ready: true }); }
@@ -2484,7 +2501,7 @@ class Component extends DCLogic {
         if (data.quizzes && typeof data.quizzes === 'object') this._saveQuizOverrides(data.quizzes);
         this._mergeTombs(data.removedShoutouts);
         if (Array.isArray(data.shoutouts) && data.shoutouts.length) { const keep = this._dropRemoved(data.shoutouts); this._saveShoutouts(keep); this.setState({ shoutouts: keep }); }
-        if (Array.isArray(data.feedback)) this._saveFeedback(data.feedback);
+        if (Array.isArray(data.feedback)) this._saveFeedback(this._mergeFeedback(data.feedback, this._feedback()));
         this._D = null;
         this.setState({ syncState: 'ok', syncedAt: data.updatedAt || new Date().toISOString(), syncBy: data.updatedBy || '' });
       } else { this.setState({ syncState: 'ok' }); }
@@ -2492,12 +2509,34 @@ class Component extends DCLogic {
   }
   _pushContent() {
     const url = this._syncUrl(); if (!url) return false;
-    const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], removedShoutouts: this._tombs(), feedback: this._feedback(), updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
     this.setState({ syncState: 'pushing' });
-    fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload, keepalive: true })
+    // Read first: the store's feedback list is owned by _syncFeedback. Publishing a lesson or
+    // saving a quiz must carry the REMOTE feedback through untouched — sending this browser's
+    // local copy used to wipe everyone else's inbox whenever an admin published anything.
+    fetch(url, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null).catch(() => null)
+      .then(remote => {
+        const remoteFb = (remote && Array.isArray(remote.feedback)) ? remote.feedback : null;
+        const fb = remoteFb ? this._mergeFeedback(remoteFb, this._feedback()) : this._feedback();
+        if (remoteFb) this._saveFeedback(fb);
+        const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], removedShoutouts: this._tombs(), feedback: fb, updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
+        return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload, keepalive: true });
+      })
       .then(() => this.setState({ syncState: 'ok', syncedAt: new Date().toISOString() }))
       .catch(() => this.setState({ syncState: 'error' }));
     return true;
+  }
+  // Union by id, newest claim state wins. Never drops a record just because this browser hasn't seen it.
+  _mergeFeedback(remote, local) {
+    const byId = {};
+    (remote || []).forEach(f => { if (f && f.id) byId[f.id] = f; });
+    (local || []).forEach(f => {
+      if (!f || !f.id) return;
+      const r = byId[f.id];
+      if (!r) { byId[f.id] = f; return; }
+      byId[f.id] = ((f.claimedAt || 0) > (r.claimedAt || 0)) ? f : r;
+    });
+    return Object.keys(byId).map(k => byId[k]).sort((a, b) => (b.ts || 0) - (a.ts || 0));
   }
 
   // ---------- lesson feedback ----------
@@ -2540,10 +2579,49 @@ class Component extends DCLogic {
     });
     this.setState({ fbText: '', fbSent: lessonId });
   }
-  resolveFeedback(id) { this._saveFeedback(this._feedback().filter(f => f.id !== id)); this._syncFeedback(list => list.filter(f => f.id !== id)); this.forceUpdate(); }
+  // Admins can force a fresh read of the shared inbox from the bell panel.
+  refreshFeedback() { this._pullContent(); }
+  // Claiming — so every admin can see who's already actioning a piece of feedback.
+  // The flag lives on the shared record, so it shows up in everyone's inbox, not just this browser.
+  claimFeedback(f) {
+    const me = { by: this.USER.name, byEmail: this.USER.email || '', at: Date.now() };
+    const stamp = list => list.map(x => x.id === f.id ? Object.assign({}, x, { claimedBy: me.by, claimedByEmail: me.byEmail, claimedAt: me.at }) : x);
+    this._saveFeedback(stamp(this._feedback()));
+    this._syncFeedback(stamp);
+    this._postToSlack({
+      title: 'Feedback claimed: ' + (f.lessonTitle || 'Training Hub'),
+      text: '*' + me.by + '* is actioning the feedback on *' + (f.lessonTitle || 'the hub') + '*\n> ' + (f.text || ''),
+      channels: '', recipients: this.USER.slack || ''
+    });
+    this.forceUpdate();
+  }
+  releaseFeedback(f) {
+    const clear = list => list.map(x => x.id === f.id ? Object.assign({}, x, { claimedBy: '', claimedByEmail: '', claimedAt: 0 }) : x);
+    this._saveFeedback(clear(this._feedback()));
+    this._syncFeedback(clear);
+    this.forceUpdate();
+  }
+  // Closing the loop in Slack so the whole admin group sees an item is handled, not just the inbox.
+  _postResolution(f, verb) {
+    if (!f) return;
+    this._postToSlack({
+      title: 'Feedback ' + verb + ': ' + (f.lessonTitle || 'Training Hub'),
+      text: '*' + this.USER.name + '* ' + verb + ' the feedback on *' + (f.lessonTitle || 'the hub') + '*'
+        + (f.author ? ' from ' + f.author : '') + '\n> ' + (f.text || ''),
+      channels: '', recipients: this.USER.slack || ''
+    });
+  }
+  resolveFeedback(id) {
+    const f = this._feedback().find(x => x.id === id);
+    this._saveFeedback(this._feedback().filter(x => x.id !== id));
+    this._syncFeedback(list => list.filter(x => x.id !== id));
+    this._postResolution(f, 'dismissed');
+    this.forceUpdate();
+  }
   resolveAndEdit(f) {
     this._saveFeedback(this._feedback().filter(x => x.id !== f.id));
     this._syncFeedback(list => list.filter(x => x.id !== f.id));
+    this._postResolution(f, 'is editing the lesson for');
     const d = this._dept(f.deptId), c = this._course(d, f.courseId);
     const l = c && c.lessons.find(x => x.id === f.lessonId);
     this.setState({ fbOpen: false }, () => { if (l) this.editLesson(f.deptId, f.courseId, l); });
@@ -2943,10 +3021,16 @@ class Component extends DCLogic {
       clearSearch: () => this.setState({ query: '' }),
       bellIcon: this.ic('bell', '#43474e', 19),
       fbOpen: this.state.fbOpen,
-      toggleFbOpen: () => this.setState(s => ({ fbOpen: !s.fbOpen })),
+      toggleFbOpen: () => this.setState(s => { if (!s.fbOpen) this._pullContent(); return { fbOpen: !s.fbOpen }; }),
+      refreshFb: () => this._pullContent(),
       fbCountLabel: '' + _fbQueue.length, hasFbCount: _fbQueue.length > 0,
       hasFbItems: _fbQueue.length > 0, noFbItems: _fbQueue.length === 0,
-      fbItems: _fbQueue.map(f => ({ type: f.type, text: f.text, lessonTitle: f.lessonTitle, author: f.author, authorLine: f.author + (f.slack ? ' · ' + f.slack : ''), typeLabel: (FBMETA[f.type] || {}).label || f.type, typeColor: (FBMETA[f.type] || {}).color || '#7b7f86', ago: _fbAgo(f.ts), onAction: () => this.resolveAndEdit(f), onDismiss: () => this.resolveFeedback(f.id) })),
+      fbItems: _fbQueue.map(f => ({ type: f.type, text: f.text, lessonTitle: f.lessonTitle, author: f.author, authorLine: f.author + (f.slack ? ' · ' + f.slack : ''), typeLabel: (FBMETA[f.type] || {}).label || f.type, typeColor: (FBMETA[f.type] || {}).color || '#7b7f86', ago: _fbAgo(f.ts), onAction: () => this.resolveAndEdit(f), onDismiss: () => this.resolveFeedback(f.id),
+        isClaimed: !!f.claimedBy, notClaimed: !f.claimedBy,
+        claimLine: f.claimedBy ? (((f.claimedByEmail || '').toLowerCase() === (this.USER.email || '').toLowerCase() ? 'You are' : f.claimedBy + ' is') + ' on it · ' + _fbAgo(f.claimedAt)) : '',
+        canRelease: !!f.claimedBy && (f.claimedByEmail || '').toLowerCase() === (this.USER.email || '').toLowerCase(),
+        onClaim: () => this.claimFeedback(f), onRelease: () => this.releaseFeedback(f),
+        cardBg: f.claimedBy ? '#fbfaf7' : '#fff' })),
     };
     if (!ready) return base;
 
