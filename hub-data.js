@@ -1201,6 +1201,38 @@ window.HUB_DATA = (function () {
           ]), { trainerMaterials: [
             { type: "deck", title: "Google Ads Account Optimizations — Slide Deck", url: "https://docs.google.com/presentation/d/1xeqHMg7s1iPbjzSSYDnhB-ZzVHnr966Z28acqh3rOSg/edit?usp=drive_link" },
           ] }),
+          Object.assign(L("co-account-optimizations", "Google Ads Account Optimizations", 12, "checklist", "The daily, weekly, and monthly checks that keep accounts healthy.", [
+            { type: "p", text: "Google Ads is not set-and-forget. Campaigns drift — search behavior changes, budgets shift, disapprovals happen — and small issues compound quickly when nobody looks. This is the cadence of checks that keeps accounts on track." },
+            { type: "h", text: "Daily · about 10 minutes" },
+            { type: "list", items: [
+              "Budget pacing — check the Budgets column in the Campaigns tab for campaigns over- or under-spending; 'limited by budget' flags a real constraint.",
+              "Disapprovals and issues — review the Ads tab, Recommendations, and billing/account status. A disapproved ad can stop delivery immediately.",
+              "Key metric changes vs. the prior day — scan the overview for unusual swings in cost, clicks, or conversions.",
+              "Conversion data — confirm conversions are still recording across all campaigns.",
+            ] },
+            { type: "h", text: "Weekly · 30–45 minutes" },
+            { type: "list", items: [
+              "Week-over-week performance — last 7 days vs. prior 7 days on cost, conversions, CPA, and ROAS. Flag anything that moved more than 20% and note why.",
+              "Budget reallocation — move spend from low performers to campaigns converting at or below target CPA.",
+              "Conversion tracking status — verify tags are firing (Tools › Conversions).",
+              "Search terms and negatives — mine the search terms report and add negatives.",
+              "Ad strength and assets — 'Poor' or 'Average' RSAs need more headline variety or pin changes; pause any asset rated Low. Use judgment on Google's recommendations.",
+              "Pause poor performers — any keyword that has spent more than 2× target CPA with zero conversions in 30 days. Investigate keywords with Quality Score under 5.",
+              "Geo targeting and call tracking spot-check.",
+            ] },
+            { type: "h", text: "Monthly · 60–90 minutes per account" },
+            { type: "list", items: [
+              "Month-over-month performance — impressions, clicks, CTR, CPC, conversions, CPA, ROAS. Document what drove the biggest swings; this feeds the client report.",
+              "Device performance — segment by device; if mobile CPA is much higher, consider a bid adjustment and check mobile page speed.",
+              "Landing page performance and Google Recommendations review.",
+              "Auction insights — impression share, overlap rate, outranking share. A competitor's jump often explains rising CPCs.",
+              "Assets — review sitelinks, callouts, structured snippets, call and image assets; pause Low, add new ones for fresh promos or services.",
+              "Structure cleanup — paused campaigns, ad groups, and keywords; audience targeting review; bidding strategy check.",
+            ] },
+            { type: "callout", tone: "tip", title: "Make it a habit", text: "Monday works well for the weekly review — you can flag issues before the bulk of the week's spend happens. Change one thing at a time and log it." },
+          ]), { link: "https://docs.google.com/presentation/d/1xeqHMg7s1iPbjzSSYDnhB-ZzVHnr966Z28acqh3rOSg/edit?usp=sharing", linkType: "slides", trainerMaterials: [
+            { type: "deck", title: "Google Ads Account Optimizations — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1xeqHMg7s1iPbjzSSYDnhB-ZzVHnr966Z28acqh3rOSg/edit?usp=sharing" },
+          ] }),
           L("co-data-exclusions", "Creating Data Exclusions", 6, "video", "Telling Smart Bidding to ignore conversion data from dates when tracking was inaccurate.", [
             { type: "p", text: "Data exclusions tell Google Ads' bidding algorithms to ignore conversion data from specific dates when that data is inaccurate (tracking broken, duplicate conversions, or skewed results), so automated bidding doesn't optimize around faulty information." },
             { type: "h", text: "When to use one" },
@@ -1294,6 +1326,42 @@ window.HUB_DATA = (function () {
             ] },
             { type: "callout", tone: "tip", title: "Best practices", text: "Case by case — don't blanket-disable everything; automated callouts or structured snippets can help. If a client requires brand control, disable all. Audit the Automated Assets section monthly to confirm Google hasn't re-enabled anything." },
           ]),
+          Object.assign(L("ga-intro", "Introduction to Google Analytics", 10, "article", "What GA4 is, how it's structured, and the metrics and reports we actually use.", [
+            { type: "p", text: "Google Analytics is a web analytics tool that tracks website traffic and user behavior — page views, session duration, traffic sources, and conversions. GA4 is how we monitor performance, optimize marketing, and make data-driven recommendations for clients." },
+            { type: "h", text: "Why we use it" },
+            { type: "list", items: [
+              "Provides insight into website performance.",
+              "Tracks user behavior and engagement.",
+              "Measures traffic sources and conversions.",
+              "Turns traffic data into actionable recommendations that improve rankings, traffic, and conversions.",
+            ] },
+            { type: "h", text: "How GA4 is structured" },
+            { type: "list", items: [
+              "Account — top-level ownership.",
+              "Property — a specific website or app.",
+              "Data Stream — the individual flow of data from that website or app.",
+            ] },
+            { type: "h", text: "Dimensions vs. metrics" },
+            { type: "p", text: "Dimensions are attributes of the data — 'Country' tells you which countries users come from. Metrics are quantitative measurements — 'Sessions' tells you how many sessions took place over a period of time." },
+            { type: "h", text: "Key insights GA4 gives you" },
+            { type: "list", items: [
+              "User — location, age, interests, device.",
+              "Session — time, source / medium, duration.",
+              "Engagement — events, engaged sessions, site navigation, time on page.",
+              "Conversion — key events, conversion rate, bounce rate, revenue.",
+            ] },
+            { type: "h", text: "Reporting walkthrough" },
+            { type: "steps", items: [
+              "Select the property to analyze. If the client isn't on GA4 yet, recommend the switch and confirm tracking is set up correctly.",
+              "Open Reports and choose the timeframe — year-over-year is ideal so seasonality is accounted for.",
+              "Add a comparison period (period-over-period) to spot trends and problem areas.",
+              "Filter with the session default channel group to isolate organic performance.",
+              "Use Explore to build custom reports for anything the standard reports don't answer.",
+            ] },
+            { type: "callout", tone: "tip", title: "What success looks like", text: "Accurate data, relevance to the client's goals, and actionability — every report should end in a recommendation, not just a number." },
+          ]), { link: "https://docs.google.com/presentation/d/1gZ1MtTfTQKSCaClddnhm55RYOLSzTGOh81UEpiqKsiE/edit?usp=sharing", linkType: "slides", trainerMaterials: [
+            { type: "deck", title: "Google Analytics — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1gZ1MtTfTQKSCaClddnhm55RYOLSzTGOh81UEpiqKsiE/edit?usp=sharing" },
+          ] }),
           L("ga4-callrail", "GA4 Conversion Setup for CallRail", 10, "video", "Connect CallRail → GA4 → Google Ads so phone call conversions are tracked and attributed.", [
             { type: "p", text: "This lesson walks through connecting CallRail → GA4 → Google Ads so phone call conversions can be tracked and attributed properly: GA4 setup, Tag Manager implementation, CallRail number pools, the Analytics integration, and importing conversions into Google Ads." },
             { type: "h", text: "Step 1 · GA4 setup" },
