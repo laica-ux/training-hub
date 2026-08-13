@@ -268,6 +268,31 @@ window.HUB_DATA = (function () {
           L("gcal", "Google Calendar", 5, "video", "Scheduling, availability, and connected client meeting schedulers.", null),
           L("clickup", "ClickUp", 6, "video", "Our task management system — daily reviews, comments, and request forms.", null),
         ]},
+        { id: "productivity-hacks", title: "Productivity & Organization Hacks", summary: "Small setup tricks that keep your inbox, files, and day under control.", lessons: [
+          Object.assign(L("gmail-labels-filters", "Gmail Labels & Filters", 6, "checklist", "Sort mail by client, tool, or category automatically — and keep low-priority notifications out of your inbox.", [
+            { type: "p", text: "Labels organize mail into categories you control; filters apply those labels automatically as mail arrives. Together they let you sort by client, tool, or category before anything hits your inbox — and keep notification noise out of your main view." },
+            { type: "h", text: "Create a label" },
+            { type: "steps", items: [
+              "In Gmail, find Labels in the left-hand sidebar and click the + icon. This opens the New label window.",
+              "Type the label name in the 'Please enter a new label name' field.",
+              "If it should sit under a parent, check 'Nest label under' and choose the parent (e.g. nest a client under Rainbow Restoration).",
+              "Click Create. Labels don't do anything on their own — apply one manually by selecting an email and clicking the label icon.",
+            ] },
+            { type: "h", text: "Create a filter (rule)" },
+            { type: "steps", items: [
+              "Click the search bar at the top of Gmail, then the sliders/filter icon on the right side — this opens the Create filter options instead of just searching.",
+              "In the From field, enter the sender's email address — the address is what Gmail matches on, not the display name.",
+              "Leave Subject, Has the words, etc. blank unless you need to narrow further — e.g. one sender emails about multiple topics and only some should get the label.",
+              "Click Create filter.",
+              "Check 'Apply the label' and choose an existing label or create a new one.",
+              "For tool or notification mail you don't need to see, also check 'Skip the Inbox (Archive it)' — it stays labeled and searchable, it just won't sit in your main inbox.",
+              "Optional: check 'Also apply filter to matching conversations' to apply the rule retroactively to existing mail from that sender.",
+              "Click Create filter to save.",
+            ] },
+            { type: "callout", tone: "tip", title: "Editing later", text: "Edit or delete any filter under Settings → See all settings → Filters and Blocked Addresses." },
+            { type: "callout", tone: "note", title: "Got a hack of your own?", text: "This module is a shared collection — if you have a setup trick that saves you time, send it to the training team and we'll add it here." },
+          ]), { link: "https://docs.google.com/document/d/1JRdgE8KPJXnR8Pi6Za_lMwbkPEVSYlZXz28tuCJSZ6w/edit?usp=sharing", linkType: "doc" }),
+        ]},
         { id: "operating-procedures", title: "Internal Ops", summary: "How we operate day to day as a team.", lessons: [
           L("out-of-office", "Out of Office Coverage", 6, "checklist", "Planning and verifying client, task, and communication coverage before any absence.", null),
           Object.assign(L("file-management", "Team File Management & Ownership", 6, "article", "How we name, store, and own files across the shared Drive — and which analytics account owns them.", null), { resources: [
@@ -1362,6 +1387,33 @@ window.HUB_DATA = (function () {
           ]), { link: "https://docs.google.com/presentation/d/1gZ1MtTfTQKSCaClddnhm55RYOLSzTGOh81UEpiqKsiE/edit?usp=sharing", linkType: "slides", trainerMaterials: [
             { type: "deck", title: "Google Analytics — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1gZ1MtTfTQKSCaClddnhm55RYOLSzTGOh81UEpiqKsiE/edit?usp=sharing" },
           ] }),
+          Object.assign(L("auto-gtm-intro", "Introduction to Google Tag Manager", 8, "article", "Tags, triggers, and variables — how we deploy tracking without touching site code.", [
+            { type: "p", text: "Google Tag Manager (GTM) is a free tool for managing and deploying marketing tags on a website without constantly editing the code. Think of it as a middleman between the website and your marketing tools: it consolidates multiple tracking codes into one container installed on the site, so everything is managed from a simple web interface instead of asking a developer every time you need a new tracker." },
+            { type: "h", text: "Why we use it" },
+            { type: "list", items: [
+              "Speed and agility — deploy new tracking in minutes instead of waiting weeks for a developer.",
+              "Reduced errors — centralizing tags reduces the risk of breaking site code.",
+              "Better performance — GTM loads tags asynchronously so they don't slow the page down for users.",
+              "Version control — every change is saved, so you can roll back if something goes wrong.",
+            ] },
+            { type: "h", text: "The three core components" },
+            { type: "list", items: [
+              "Tags — the \"what.\" Snippets of code (Google Analytics, Facebook Pixel) that send data to a platform.",
+              "Triggers — the \"when.\" The rules that tell a tag to fire (someone clicks a Submit button, views a specific page).",
+              "Variables — the \"how.\" Extra information tags and triggers need to work (a Product ID, a Page URL).",
+            ] },
+            { type: "h", text: "GTM vs. Google Analytics" },
+            { type: "p", text: "They're complementary, not interchangeable. GTM is not a reporting tool — it shows no charts or graphs. It's the conduit that sends data from the site to Google Analytics. Analytics is where that data is stored, processed, and reported. GTM sends the event (a click); Analytics shows the report." },
+            { type: "h", text: "Testing and publishing" },
+            { type: "steps", items: [
+              "Use Preview mode to test tags on the live site before anyone else sees them — you can see exactly which tags fired and which didn't.",
+              "Verify your work in Preview mode every time before going live.",
+              "Changes only go live once you hit Submit and then Publish.",
+            ] },
+            { type: "callout", tone: "tip", title: "Practice", text: "To track a Contact Us form submission, name the tag (e.g. Contact Tag), decide what triggers it to fire, and identify the variable that confirms you're tracking the right action." },
+          ]), { link: "https://docs.google.com/presentation/d/1TFrdZnKEpVm17j6hG1gcwLf1cJ7KDTG1ooAXJYzTmSw/edit?usp=sharing", linkType: "slides", trainerMaterials: [
+            { type: "deck", title: "Introduction to Google Tag Manager — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1TFrdZnKEpVm17j6hG1gcwLf1cJ7KDTG1ooAXJYzTmSw/edit?usp=sharing" },
+          ] }),
           L("ga4-callrail", "GA4 Conversion Setup for CallRail", 10, "video", "Connect CallRail → GA4 → Google Ads so phone call conversions are tracked and attributed.", [
             { type: "p", text: "This lesson walks through connecting CallRail → GA4 → Google Ads so phone call conversions can be tracked and attributed properly: GA4 setup, Tag Manager implementation, CallRail number pools, the Analytics integration, and importing conversions into Google Ads." },
             { type: "h", text: "Step 1 · GA4 setup" },
@@ -1504,6 +1556,46 @@ window.HUB_DATA = (function () {
             ] },
             { type: "callout", tone: "note", title: "About this lesson", text: "This is Google's official “Enhanced Conversions (Web) Implementation” deck. Use the full slide deck below for the detailed, screen-by-screen implementation and validation steps." },
           ]),
+          Object.assign(L("auto-conversion-troubleshooting", "Conversion Tracking Troubleshooting", 10, "article", "How to notice a tracking problem, trace it to its source, and test the fix.", [
+            { type: "p", text: "Every decision we make for a client — what we optimize toward, how we prove results — depends on accurate conversion data. If tracking is broken, we're not just missing a number on a report; we're optimizing campaigns on the wrong signal and won't know until a client asks why results dropped. Catching a tracking problem the same week is a quick conversation. Catching it a month later is a much harder one." },
+            { type: "h", text: "Primary vs. secondary conversions" },
+            { type: "p", text: "Every conversion action in Google Ads is set to primary or secondary. Primary actions appear in the main Conversions column and are what the bidding algorithm optimizes toward. Secondary actions still record and appear in All conversions, but they're observation only — they don't drive bidding. An account can look like it has zero conversions in the main column while several actions record quietly as secondary, so check All conversions before you panic." },
+            { type: "h", text: "Step 1 · Notice there's a problem" },
+            { type: "list", items: [
+              "Zero conversions where you normally see activity.",
+              "A sudden, unexplained drop.",
+              "A long gap since the last recorded conversion.",
+              "Check conversions during regular account check-ins, not just when a client asks.",
+            ] },
+            { type: "h", text: "Step 2 · Check the conversion action status" },
+            { type: "p", text: "Google Ads → Goals → Conversions → Summary. Every action shows a status; hover any status for details and next steps." },
+            { type: "list", items: [
+              "Active — everything is working as intended.",
+              "Needs attention — there's an issue to address, but conversions haven't stopped recording entirely.",
+              "Misconfigured — conversions have stopped completely due to a setup error or broken tag.",
+              "Awaiting conversions — nothing recorded in the last seven days; often a new action, a paused campaign, or low traffic.",
+              "Removed — the action was manually deleted or archived.",
+            ] },
+            { type: "h", text: "Step 3 · Trace it to the source" },
+            { type: "p", text: "Don't guess — go to the system the conversion actually originates in and look. Website form or button → Google Tag Manager. GA4 events → GA4. A CRM like HubSpot → the CRM's marketing or ads settings." },
+            { type: "callout", tone: "note", title: "When a CRM feeds Google Ads", text: "Many clients send offline conversions from a CRM like HubSpot back into Google Ads. Some CRMs only sync a deal as a conversion once it reaches a specific stage (e.g. Closed Won) and only if the deal is linked to a contact Google Ads can attribute to an ad click. If a deal or lifecycle-stage mapping is off, the sync silently stops while everything still looks fine in Google Ads." },
+            { type: "h", text: "Step 4 · Test with preview and debug mode" },
+            { type: "p", text: "GTM's preview and debug mode lets you browse the site as if the current tag setup were live, without affecting real visitors. It shows which tags fired, which didn't, and what data they sent. Use it to answer two questions: is this tag firing when it should (undercounting), and is it firing more often than it should (overcounting)?" },
+            { type: "callout", tone: "warn", title: "Testing purchases and leads", text: "If you need to trigger a real purchase or lead event to test, talk to the client first — ask whether they can refund a test order or provide a 100%-off discount code. Never test blind on a live client account without a plan to undo it." },
+            { type: "h", text: "Meta and other platforms" },
+            { type: "p", text: "The same mindset applies outside Google Ads. Meta has the Meta Pixel Helper browser extension and the Test Events tool in Events Manager — both answer the same question: is this event firing, and is it sending the right data? If a Meta pixel is implemented through GTM, you can often test it in preview mode too." },
+            { type: "h", text: "The troubleshooting flow" },
+            { type: "steps", items: [
+              "Notice something looks off.",
+              "Check the conversion status in the platform.",
+              "Trace the issue to its source system.",
+              "Test with preview and debug tools.",
+              "Fix it — or ask for help if you're unsure.",
+            ] },
+            { type: "callout", tone: "tip", title: "Key takeaways", text: "Tracking problems are normal; what matters is catching them early and knowing where to look. Check All conversions before assuming something is broken, always trace an issue back to the system it came from, and ask before you touch a live account." },
+          ]), { link: "https://docs.google.com/presentation/d/1YER_2B6TcPVlWEHsU-IcDKCFob3XPONHBcbCxOxx9gY/edit?usp=sharing", linkType: "slides", trainerMaterials: [
+            { type: "deck", title: "Conversion Tracking Troubleshooting — Slide Deck", sub: "Google Slides · opens in a new tab", url: "https://docs.google.com/presentation/d/1YER_2B6TcPVlWEHsU-IcDKCFob3XPONHBcbCxOxx9gY/edit?usp=sharing" },
+          ] }),
         ]},
         { id: "ppc-reporting-mod", title: "Reporting", summary: "Building branded monthly client reports in Looker Studio — for GFF and SOS.", lessons: [
           L("rep-gff", "GFF Monthly Reporting", 7, "video", "Building a branded monthly client report in Looker Studio from the latest GFF template.", [
