@@ -2412,24 +2412,36 @@ class Component extends DCLogic {
       if (e && pmap[e]) { rosterOf[e] = r; emailOf[this._norm(r.name)] = e; used[e] = 1; }
     });
     const free = Object.keys(pmap).filter(e => !used[e]);
+    const fits = (r, e) => {
+      const rp = this._norm(r.name).split(' ').filter(Boolean);
+      if (!rp.length) return false;
+      const first = rp[0], last = rp[rp.length - 1];
+      const parts = this._norm(e.split('@')[0].replace(/[._-]+/g, ' ')).split(' ').filter(Boolean);
+      const self = this._norm((pmap[e] || {}).name).split(' ').filter(Boolean);
+      if (self.length > 1 && self[0] === first && self[self.length - 1] === last) return true;
+      if (parts.length > 1) return first.indexOf(parts[0]) === 0 && last.indexOf(parts[parts.length - 1]) === 0;
+      const t = parts[0] || '';
+      if (!t || first.indexOf(t) !== 0) return false;     // "chris" pairs with "Christopher"
+      if (self.length) return first.indexOf(self[0]) === 0 || self[0].indexOf(first) === 0;
+      return true;
+    };
+    // Two passes so uniqueness is checked BOTH ways: one progress entry may fit this
+    // person, but if that entry also fits somebody else on the roster we commit nothing.
+    // Crediting one employee's completions to another is worse than showing no match.
+    const cand = [];
+    const perEmail = {};
     roster.forEach(r => {
       const e0 = String(r.email || r.workEmail || '').toLowerCase().trim();
       if (e0 && pmap[e0]) return;
-      const rp = this._norm(r.name).split(' ').filter(Boolean);
-      if (!rp.length) return;
-      const first = rp[0], last = rp[rp.length - 1];
-      const hits = free.filter(e => {
-        if (used[e]) return false;
-        const parts = this._norm(e.split('@')[0].replace(/[._-]+/g, ' ')).split(' ').filter(Boolean);
-        const self = this._norm((pmap[e] || {}).name).split(' ').filter(Boolean);
-        if (self.length > 1 && self[0] === first && self[self.length - 1] === last) return true;
-        if (parts.length > 1) return first.indexOf(parts[0]) === 0 && last.indexOf(parts[parts.length - 1]) === 0;
-        const t = parts[0] || '';
-        if (!t || first.indexOf(t) !== 0) return false;   // "chris" pairs with "Christopher"
-        if (self.length) return first.indexOf(self[0]) === 0 || self[0].indexOf(first) === 0;
-        return true;
-      });
-      if (hits.length === 1) { rosterOf[hits[0]] = r; emailOf[this._norm(r.name)] = hits[0]; used[hits[0]] = 1; }
+      if (!this._norm(r.name)) return;
+      const hits = free.filter(e => fits(r, e));
+      if (hits.length !== 1) return;                      // ambiguous from the roster side
+      cand.push({ r: r, e: hits[0] });
+      perEmail[hits[0]] = (perEmail[hits[0]] || 0) + 1;
+    });
+    cand.forEach(c => {
+      if (perEmail[c.e] !== 1) return;                     // ambiguous from the email side
+      rosterOf[c.e] = c.r; emailOf[this._norm(c.r.name)] = c.e; used[c.e] = 1;
     });
     return { pmap: pmap, rosterOf: rosterOf, emailOf: emailOf, rosterKnown: roster.length > 0 };
   }
@@ -2588,8 +2600,8 @@ class Component extends DCLogic {
       .then(remote => {
         const remoteFb = (remote && Array.isArray(remote.feedback)) ? remote.feedback : null;
         const deadFb = this._mergeFbTombs(remote && remote.removedFeedback);
-        const fb = (remoteFb ? this._mergeFeedback(remoteFb, this._feedback()) : this._feedback()).filter(f => f && deadFb.indexOf(f.id) < 0);
-        if (remoteFb) this._saveFeedback(fb);
+        const fb = this._mergeFeedback(remoteFb || [], this._feedback());
+        this._saveFeedback(fb);
         const remoteNotices = (remote && Array.isArray(remote.fbNotices)) ? remote.fbNotices : null;
         const nt = remoteNotices ? this._mergeNotices(remoteNotices, this._notices()) : this._notices();
         if (remoteNotices) this._saveNotices(nt);
@@ -2616,18 +2628,45 @@ class Component extends DCLogic {
     const t = this._fbTombs();
     if (t.indexOf(id) < 0) { t.push(id); this._saveFbTombs(t); }
   }
-  // Union by id, newest claim state wins. Never drops a record just because this browser hasn't seen it.
+  // WHY THIS SHAPE: resolving used to DELETE the record. A delete can't survive a union
+  // merge — any browser still holding the item re-added it on its next sync, so resolved
+  // feedback kept coming back. Records are now never removed; they carry a status
+  // ('open' | 'claimed' | 'resolved') plus a monotonic stateAt, and the merge keeps the
+  // newest state per id. A stale copy always loses because its stateAt is older, and every
+  // sync re-asserts what this browser knows, so the store self-heals instead of resurrecting.
+  _fbAt(f) { return Number((f && (f.stateAt || f.claimedAt || f.ts)) || 0); }
+  _fbStatus(f) {
+    if (!f) return 'open';
+    if (f.status) return f.status;
+    return f.claimedBy ? 'claimed' : 'open';           // legacy records predate status
+  }
+  _fbLive(list) { return (list || []).filter(f => f && f.id && this._fbStatus(f) !== 'resolved'); }
   _mergeFeedback(remote, local) {
     const dead = this._fbTombs();
     const byId = {};
-    (remote || []).forEach(f => { if (f && f.id) byId[f.id] = f; });
-    (local || []).forEach(f => {
+    const take = (f) => {
       if (!f || !f.id) return;
-      const r = byId[f.id];
-      if (!r) { byId[f.id] = f; return; }
-      byId[f.id] = ((f.claimedAt || 0) > (r.claimedAt || 0)) ? f : r;
-    });
-    return Object.keys(byId).filter(k => dead.indexOf(k) < 0).map(k => byId[k]).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      let rec = f;
+      // honor tombstones written by the previous build
+      if (dead.indexOf(f.id) >= 0 && this._fbStatus(f) !== 'resolved') {
+        rec = Object.assign({}, f, { status: 'resolved', stateAt: this._fbAt(f) + 1 });
+      }
+      const cur = byId[rec.id];
+      if (!cur || this._fbAt(rec) > this._fbAt(cur)) byId[rec.id] = rec;
+    };
+    (remote || []).forEach(take);
+    (local || []).forEach(take);
+    return Object.keys(byId).map(k => byId[k]).sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 300);
+  }
+  // The one write path for every state change: stamp locally, then re-assert into the
+  // shared store through the same merge. No caller ever removes a record by hand again.
+  _applyFb(id, patch) {
+    if (!id) return;
+    const full = Object.assign({}, patch, { stateAt: Date.now(), stateBy: (this.USER && this.USER.name) || '' });
+    const stamp = list => (list || []).map(x => (x && x.id === id) ? Object.assign({}, x, full) : x);
+    this._saveFeedback(stamp(this._feedback()));
+    this._syncFeedback(stamp);
+    this.forceUpdate();
   }
 
   // ---------- lesson feedback ----------
@@ -2647,7 +2686,7 @@ class Component extends DCLogic {
       if (!data || typeof data !== 'object') return;
       const base = data;
       const dead = this._mergeFbTombs(base.removedFeedback);
-      const merged = mutate(Array.isArray(base.feedback) ? base.feedback : []).filter(f => f && dead.indexOf(f.id) < 0);
+      const merged = this._mergeFeedback(mutate(Array.isArray(base.feedback) ? base.feedback : []), this._feedback());
       this._saveFeedback(merged);
       base.feedback = merged;
       base.removedFeedback = dead;
@@ -2701,7 +2740,7 @@ class Component extends DCLogic {
   _saveFeedback(arr) { try { localStorage.setItem(this.FKEY, JSON.stringify(arr)); } catch (e) {} }
   addFeedback(deptId, courseId, lessonId, lessonTitle) {
     const text = (this.state.fbText || '').trim(); if (!text) return;
-    const rec = { id: 'fb-' + Date.now().toString(36), deptId, courseId, lessonId, lessonTitle, type: 'feedback', text, author: this.USER.name, email: this.USER.email, slack: this.USER.slack, ts: Date.now() };
+    const rec = { id: 'fb-' + Date.now().toString(36), deptId, courseId, lessonId, lessonTitle, type: 'feedback', text, author: this.USER.name, email: this.USER.email, slack: this.USER.slack, ts: Date.now(), status: 'open', stateAt: Date.now() };
     this._saveFeedback([rec].concat(this._feedback()));
     this._syncFeedback(list => [rec].concat(list.filter(f => f.id !== rec.id)));
     // localStorage is per-browser, so also push it out the webhook or nobody but this user ever sees it
@@ -2720,9 +2759,7 @@ class Component extends DCLogic {
   // The flag lives on the shared record, so it shows up in everyone's inbox, not just this browser.
   claimFeedback(f) {
     const me = { by: this.USER.name, byEmail: this.USER.email || '', at: Date.now() };
-    const stamp = list => list.map(x => x.id === f.id ? Object.assign({}, x, { claimedBy: me.by, claimedByEmail: me.byEmail, claimedAt: me.at }) : x);
-    this._saveFeedback(stamp(this._feedback()));
-    this._syncFeedback(stamp);
+    this._applyFb(f.id, { status: 'claimed', claimedBy: me.by, claimedByEmail: me.byEmail, claimedAt: me.at });
     this._notify(f, 'claimed');
     this._postToSlack({
       title: 'Feedback picked up: ' + (f.lessonTitle || 'Training Hub'),
@@ -2732,10 +2769,7 @@ class Component extends DCLogic {
     this.forceUpdate();
   }
   releaseFeedback(f) {
-    const clear = list => list.map(x => x.id === f.id ? Object.assign({}, x, { claimedBy: '', claimedByEmail: '', claimedAt: 0 }) : x);
-    this._saveFeedback(clear(this._feedback()));
-    this._syncFeedback(clear);
-    this.forceUpdate();
+    this._applyFb(f.id, { status: 'open', claimedBy: '', claimedByEmail: '', claimedAt: 0 });
   }
   // Closing the loop in Slack so the whole admin group sees an item is handled, not just the inbox.
   _postResolution(f, v) {
@@ -2749,17 +2783,14 @@ class Component extends DCLogic {
   }
   resolveFeedback(id) {
     const f = this._feedback().find(x => x.id === id);
-    this._addFbTomb(id);
-    this._saveFeedback(this._feedback().filter(x => x.id !== id));
-    this._syncFeedback(list => list.filter(x => x.id !== id));
+    this._addFbTomb(id);                                  // keeps older deployed clients in step
+    this._applyFb(id, { status: 'resolved', resolvedBy: (this.USER && this.USER.name) || '', resolvedAt: Date.now() });
     this._postResolution(f, { titleWord: 'resolved', line: 'resolved' });
     this._notify(f, 'reviewed');
-    this.forceUpdate();
   }
   resolveAndEdit(f) {
     this._addFbTomb(f && f.id);
-    this._saveFeedback(this._feedback().filter(x => x.id !== f.id));
-    this._syncFeedback(list => list.filter(x => x.id !== f.id));
+    this._applyFb(f && f.id, { status: 'resolved', resolvedBy: (this.USER && this.USER.name) || '', resolvedAt: Date.now() });
     this._postResolution(f, { titleWord: 'addressed', line: 'is updating the lesson to address' });
     this._notify(f, 'updated');
     const d = this._dept(f.deptId), c = this._course(d, f.courseId);
@@ -3050,7 +3081,7 @@ class Component extends DCLogic {
   renderVals() {
     const ready = this.state.ready && !!window.HUB_DATA;
     const FBMETA = { feedback: { label: 'Feedback', color: '#3b6cf5' }, outdated: { label: 'Outdated', color: '#e0644a' }, error: { label: 'Broken link', color: '#d94f8a' }, suggestion: { label: 'Suggestion', color: '#3b6cf5' }, question: { label: 'Question', color: '#7a5af0' }, praise: { label: 'Praise', color: '#2f9e5e' } };
-    const _fbAll = this._feedback();
+    const _fbAll = this._fbLive(this._feedback());
     const _fbQueue = _fbAll.filter(f => f.type !== 'praise');
     const _fbAgo = (ts) => { const m = Math.round((Date.now() - ts) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + 'm ago'; const h = Math.round(m / 60); if (h < 24) return h + 'h ago'; return Math.round(h / 24) + 'd ago'; };
     const _slack = this._slackCfg();
