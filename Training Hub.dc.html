@@ -2398,20 +2398,54 @@ class Component extends DCLogic {
     const ids = {}; (this._D || this._buildData()).forEach(d => (d.courses || []).forEach(c => c.lessons.forEach(l => { ids[l.id] = 1; })));
     return Object.keys(this.state.completed || {}).filter(k => this.state.completed[k] && ids[k]).length;
   }
-  // Top 3 Elevators — ranked from the shared progress store (email → {done,total,name,lastActive})
-  _topElevators() {
+  _norm(v) { return String(v || '').toLowerCase().replace(/[^a-z ]+/g, ' ').trim().replace(/\s+/g, ' '); }
+  // BambooHR records don't always carry a work email. Those people used to read as
+  // "Not started" (and vanish from the leaderboard) no matter how much they'd finished,
+  // so pair them with their progress entry by name / email localpart instead. A match
+  // only counts when exactly one progress entry fits, so nobody is credited by guess.
+  _pairRoster() {
     const pmap = this.state.progressMap || {};
     const roster = (this.state.bamboo && this.state.bamboo.roster) || [];
-    const deptOf = {}, nameOf = {};
-    roster.forEach(r => { const e = ((r.email || r.workEmail || '') + '').toLowerCase().trim(); if (e) { deptOf[e] = r.department || r.dept || ''; nameOf[e] = (r.name || '').trim(); } });
-    const rosterKnown = Object.keys(nameOf).length > 0;
+    const rosterOf = {}, emailOf = {}, used = {};
+    roster.forEach(r => {
+      const e = String(r.email || r.workEmail || '').toLowerCase().trim();
+      if (e && pmap[e]) { rosterOf[e] = r; emailOf[this._norm(r.name)] = e; used[e] = 1; }
+    });
+    const free = Object.keys(pmap).filter(e => !used[e]);
+    roster.forEach(r => {
+      const e0 = String(r.email || r.workEmail || '').toLowerCase().trim();
+      if (e0 && pmap[e0]) return;
+      const rp = this._norm(r.name).split(' ').filter(Boolean);
+      if (!rp.length) return;
+      const first = rp[0], last = rp[rp.length - 1];
+      const hits = free.filter(e => {
+        if (used[e]) return false;
+        const parts = this._norm(e.split('@')[0].replace(/[._-]+/g, ' ')).split(' ').filter(Boolean);
+        const self = this._norm((pmap[e] || {}).name).split(' ').filter(Boolean);
+        if (self.length > 1 && self[0] === first && self[self.length - 1] === last) return true;
+        if (parts.length > 1) return first.indexOf(parts[0]) === 0 && last.indexOf(parts[parts.length - 1]) === 0;
+        const t = parts[0] || '';
+        if (!t || first.indexOf(t) !== 0) return false;   // "chris" pairs with "Christopher"
+        if (self.length) return first.indexOf(self[0]) === 0 || self[0].indexOf(first) === 0;
+        return true;
+      });
+      if (hits.length === 1) { rosterOf[hits[0]] = r; emailOf[this._norm(r.name)] = hits[0]; used[hits[0]] = 1; }
+    });
+    return { pmap: pmap, rosterOf: rosterOf, emailOf: emailOf, rosterKnown: roster.length > 0 };
+  }
+  // Top 3 Elevators — ranked from the shared progress store (email → {done,total,name,lastActive})
+  _topElevators() {
+    const pair = this._pairRoster();
+    const pmap = pair.pmap;
+    const rosterKnown = pair.rosterKnown;
     let rows = Object.keys(pmap).map(email => {
       const key = email.toLowerCase().trim();
       const rec = pmap[email] || {};
+      const rm = pair.rosterOf[key] || null;
       // Roster name wins over any self-reported name so the board can't show a stray alias.
-      const nm = nameOf[key] || (rec.name || '').trim() || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      const d = deptOf[key] || '';
-      return { email: key, name: nm, done: Number(rec.done || 0), total: Number(rec.total || 0), dept: (d && d !== 'None') ? d : '', onRoster: !!nameOf[key] };
+      const nm = (rm && (rm.name || '').trim()) || (rec.name || '').trim() || email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const d = rm ? (rm.department || rm.dept || '') : '';
+      return { email: key, name: nm, done: Number(rec.done || 0), total: Number(rec.total || 0), dept: (d && d !== 'None') ? d : '', onRoster: !!rm };
     }).filter(r => r.done > 0)
       // Once the roster has loaded, only real employees can appear (drops test/personal sign-ins).
       .filter(r => !rosterKnown || r.onRoster);
@@ -2534,6 +2568,7 @@ class Component extends DCLogic {
         if (data.custom && typeof data.custom === 'object') this._saveCustom(data.custom);
         if (data.quizzes && typeof data.quizzes === 'object') this._saveQuizOverrides(data.quizzes);
         this._mergeTombs(data.removedShoutouts);
+        this._mergeFbTombs(data.removedFeedback);
         if (Array.isArray(data.shoutouts) && data.shoutouts.length) { const keep = this._dropRemoved(data.shoutouts); this._saveShoutouts(keep); this.setState({ shoutouts: keep }); }
         if (Array.isArray(data.feedback)) this._saveFeedback(this._mergeFeedback(data.feedback, this._feedback()));
         if (Array.isArray(data.fbNotices)) this._saveNotices(this._mergeNotices(data.fbNotices, this._notices()));
@@ -2552,20 +2587,38 @@ class Component extends DCLogic {
       .then(r => r.ok ? r.json() : null).catch(() => null)
       .then(remote => {
         const remoteFb = (remote && Array.isArray(remote.feedback)) ? remote.feedback : null;
-        const fb = remoteFb ? this._mergeFeedback(remoteFb, this._feedback()) : this._feedback();
+        const deadFb = this._mergeFbTombs(remote && remote.removedFeedback);
+        const fb = (remoteFb ? this._mergeFeedback(remoteFb, this._feedback()) : this._feedback()).filter(f => f && deadFb.indexOf(f.id) < 0);
         if (remoteFb) this._saveFeedback(fb);
         const remoteNotices = (remote && Array.isArray(remote.fbNotices)) ? remote.fbNotices : null;
         const nt = remoteNotices ? this._mergeNotices(remoteNotices, this._notices()) : this._notices();
         if (remoteNotices) this._saveNotices(nt);
-        const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], removedShoutouts: this._tombs(), feedback: fb, fbNotices: nt, updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
+        const payload = JSON.stringify({ custom: this._custom(), quizzes: this._quizOverrides(), shoutouts: this.state.shoutouts || [], removedShoutouts: this._tombs(), removedFeedback: deadFb, feedback: fb, fbNotices: nt, updatedAt: new Date().toISOString(), updatedBy: (this.USER && this.USER.name) || '' });
         return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: payload, keepalive: true });
       })
       .then(() => this.setState({ syncState: 'ok', syncedAt: new Date().toISOString() }))
       .catch(() => this.setState({ syncState: 'error' }));
     return true;
   }
+  // Resolved feedback needs a tombstone. Without one, any browser still holding the item
+  // in localStorage pushes it back into the shared store on its next sync, so a resolved
+  // note kept reappearing in every admin inbox.
+  _fbTombs() { try { const a = JSON.parse(localStorage.getItem('sosgff_fbtombs_v1') || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  _saveFbTombs(a) { try { localStorage.setItem('sosgff_fbtombs_v1', JSON.stringify((a || []).slice(-500))); } catch (e) {} }
+  _mergeFbTombs(remote) {
+    const out = this._fbTombs().slice();
+    (Array.isArray(remote) ? remote : []).forEach(id => { if (id && out.indexOf(id) < 0) out.push(id); });
+    this._saveFbTombs(out);
+    return out;
+  }
+  _addFbTomb(id) {
+    if (!id) return;
+    const t = this._fbTombs();
+    if (t.indexOf(id) < 0) { t.push(id); this._saveFbTombs(t); }
+  }
   // Union by id, newest claim state wins. Never drops a record just because this browser hasn't seen it.
   _mergeFeedback(remote, local) {
+    const dead = this._fbTombs();
     const byId = {};
     (remote || []).forEach(f => { if (f && f.id) byId[f.id] = f; });
     (local || []).forEach(f => {
@@ -2574,7 +2627,7 @@ class Component extends DCLogic {
       if (!r) { byId[f.id] = f; return; }
       byId[f.id] = ((f.claimedAt || 0) > (r.claimedAt || 0)) ? f : r;
     });
-    return Object.keys(byId).map(k => byId[k]).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    return Object.keys(byId).filter(k => dead.indexOf(k) < 0).map(k => byId[k]).sort((a, b) => (b.ts || 0) - (a.ts || 0));
   }
 
   // ---------- lesson feedback ----------
@@ -2593,9 +2646,11 @@ class Component extends DCLogic {
       // and wipe every admin course, quiz, and shoutout for everyone.
       if (!data || typeof data !== 'object') return;
       const base = data;
-      const merged = mutate(Array.isArray(base.feedback) ? base.feedback : []);
+      const dead = this._mergeFbTombs(base.removedFeedback);
+      const merged = mutate(Array.isArray(base.feedback) ? base.feedback : []).filter(f => f && dead.indexOf(f.id) < 0);
       this._saveFeedback(merged);
       base.feedback = merged;
+      base.removedFeedback = dead;
       base.updatedAt = new Date().toISOString();
       return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(base), keepalive: true });
     }).then(() => this.forceUpdate()).catch(() => {});
@@ -2694,6 +2749,7 @@ class Component extends DCLogic {
   }
   resolveFeedback(id) {
     const f = this._feedback().find(x => x.id === id);
+    this._addFbTomb(id);
     this._saveFeedback(this._feedback().filter(x => x.id !== id));
     this._syncFeedback(list => list.filter(x => x.id !== id));
     this._postResolution(f, { titleWord: 'resolved', line: 'resolved' });
@@ -2701,6 +2757,7 @@ class Component extends DCLogic {
     this.forceUpdate();
   }
   resolveAndEdit(f) {
+    this._addFbTomb(f && f.id);
     this._saveFeedback(this._feedback().filter(x => x.id !== f.id));
     this._syncFeedback(list => list.filter(x => x.id !== f.id));
     this._postResolution(f, { titleWord: 'addressed', line: 'is updating the lesson to address' });
@@ -3301,12 +3358,14 @@ class Component extends DCLogic {
         const DEPTPAL = ['#3b6cf5', '#e0644a', '#2f9e5e', '#7a5af0', '#e08a1e', '#d94f8a', '#1f9e8f', '#6b7280', '#c44ed9', '#2fa3d9'];
         const deptColor = (name) => { let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return DEPTPAL[h % DEPTPAL.length]; };
         const cleanDept = (d) => (d && d !== 'None' && d.trim()) ? d.trim() : 'Unassigned';
-        const pmap = this.state.progressMap || {};
+        const pair = this._pairRoster();
+        const pmap = pair.pmap;
         const progressLive = !!this.PROGRESS_URL;
         const ago = (iso) => { if (!iso) return ''; const m = Math.round((Date.now() - new Date(iso)) / 60000); if (m < 1) return 'just now'; if (m < 60) return m + 'm ago'; const h = Math.round(m / 60); if (h < 24) return h + 'h ago'; const d = Math.round(h / 24); return d === 1 ? 'yesterday' : d + 'd ago'; };
         const rowsB = bamRoster.map((m, i) => {
           const dept = cleanDept(m.dept);
-          const rec = m.email ? pmap[String(m.email).toLowerCase().trim()] : null;
+          const pkey = (m.email && pmap[String(m.email).toLowerCase().trim()]) ? String(m.email).toLowerCase().trim() : pair.emailOf[this._norm(m.name)];
+          const rec = pkey ? pmap[pkey] : null;
           const base2 = { name: m.name, youTag: '', role: m.title || '—', initials: m.initials || this._initials(m.name), avatarColor: AV[i % AV.length],
             trackName: dept, trackTint: deptColor(dept), lastActiveLabel: rec ? ago(rec.lastActive) : '—' };
           if (rec && rec.total) {

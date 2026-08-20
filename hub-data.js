@@ -610,9 +610,8 @@ window.HUB_DATA = (function () {
             { type: "list", items: [
               "Premium placement above all other search results, including Google Ads.",
               "Matched to business/service categories and customer location, not manually chosen keywords.",
-              "Businesses can earn the Google Guarantee (service providers) or Google Screened (professional services) — both require pre-screening and customer reviews.",
+              "Businesses can earn Google Screened (professional services), which requires pre-screening and customer reviews.",
             ] },
-            { type: "callout", tone: "note", title: "The Google Guarantee", text: "If a customer is dissatisfied with the service quality, Google may reimburse them up to the cost of the initial service (subject to a lifetime cap). It does not cover add-on/future services, property damage, trip or diagnostic fees, price dissatisfaction, responsiveness, or cancellations." },
             { type: "h", text: "Our scope of work" },
             { type: "list", items: [
               "Account setup — create and optimize the client's LSA account: business details, service area, job types, and weekly budget. (The client handles background checks and the minimum required reviews.)",
