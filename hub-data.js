@@ -188,6 +188,121 @@ window.HUB_DATA = (function () {
             { type: "folder", title: "HR Training Resources", url: "https://drive.google.com/drive/folders/1i2VRdxSFl3pJxgYZf10-B9yV_DDZfhvW?usp=drive_link" },
           ] }),
         ]},
+        { id: "workplace-conduct", title: "Workplace Conduct", summary: "Six short videos with Shane on how we treat each other and how we show up.", lessons: [
+          L("wc-bullying", "Bullying", 3, "video", "What bullying looks like at work, why it isn't tolerated here, and what to do if you see it.", [
+            { type: "p", text: "Bullying is repeated behavior intended to intimidate, humiliate, or undermine a coworker. It isn't the same as a disagreement or tough feedback — the difference is intent and pattern." },
+            { type: "h", text: "What it can look like" },
+            { type: "list", items: [
+              "Repeated criticism, mocking, or belittling — in person, on calls, or in Slack.",
+              "Deliberately excluding someone from meetings, threads, or information they need to do their job.",
+              "Spreading rumors, taking credit for someone's work, or setting someone up to fail.",
+              "Yelling, threats, or aggressive behavior of any kind.",
+            ] },
+            { type: "callout", tone: "warn", title: "Zero tolerance", text: "Bullying is a violation of our standards of conduct and can result in corrective action up to and including termination — the same as harassment." },
+            { type: "h", text: "If it happens to you or you witness it" },
+            { type: "steps", items: [
+              "Tell the person the behavior isn't okay, if you feel safe doing so.",
+              "Report it to your supervisor, Management, or HR — whichever you're most comfortable with.",
+              "Write down what happened, when, and who was there while it's fresh.",
+            ] },
+            { type: "callout", tone: "note", title: "No retaliation", text: "Nobody is penalized for raising a concern in good faith. See the Reporting Workplace Concerns lesson for the full process." },
+          ]),
+          L("wc-harassment", "Harassment", 3, "video", "Our harassment policy in plain terms — what's prohibited, and your responsibility to report it.", [
+            { type: "p", text: "GFF/SOS prohibits harassment of any kind, including harassment based on race, religion, color, sex, national origin, disability, age, or any other protected status. This applies to employees, clients, vendors, and anyone else you interact with on the job — in the office, on client calls, at events, and online." },
+            { type: "h", text: "Prohibited conduct includes" },
+            { type: "list", items: [
+              "Slurs, jokes, or comments about a protected characteristic.",
+              "Unwelcome sexual advances, requests for favors, or comments about someone's body or appearance.",
+              "Displaying or sharing offensive images or material, including over Company systems.",
+              "Any conduct that creates an intimidating, hostile, or offensive work environment.",
+            ] },
+            { type: "callout", tone: "warn", title: "“I didn't mean it that way” isn't a defense", text: "The standard is how the behavior lands, not how it was intended. If someone tells you to stop, stop." },
+            { type: "h", text: "Your responsibility" },
+            { type: "steps", items: [
+              "Don't participate — and don't stay silent when you see it.",
+              "Report it to your supervisor, Management, or HR promptly.",
+              "Cooperate honestly if you're asked about an investigation.",
+            ] },
+            { type: "callout", tone: "note", title: "Same rules online", text: "Social media and Slack are covered. Discriminatory remarks, harassment, and threats aren't tolerated in any channel." },
+          ]),
+          L("wc-reporting-concerns", "Reporting Workplace Concerns", 3, "video", "Who to go to, what happens after you report, and the no-retaliation guarantee.", [
+            { type: "p", text: "Most problems get solved fastest when they're raised early. This lesson covers how to bring a concern forward and what to expect once you do." },
+            { type: "h", text: "Who to talk to" },
+            { type: "steps", items: [
+              "Start with your supervisor when it's about work — workload, process, a disagreement with a teammate.",
+              "Go to HR or Management for anything involving harassment, bullying, discrimination, safety, or your supervisor themselves.",
+              "You can skip a step. There's no requirement to go through someone you're uncomfortable with.",
+            ] },
+            { type: "h", text: "What to bring" },
+            { type: "list", items: [
+              "What happened, in specifics — dates, times, what was said or done.",
+              "Who was involved and who else saw it.",
+              "Anything in writing: Slack messages, emails, screenshots.",
+            ] },
+            { type: "h", text: "What happens next" },
+            { type: "list", items: [
+              "Your report is taken seriously and kept as confidential as the investigation allows.",
+              "HR or Management follows up with the people involved.",
+              "You're told the outcome to the extent it's appropriate to share.",
+            ] },
+            { type: "callout", tone: "warn", title: "Retaliation is prohibited", text: "Nobody may be punished, sidelined, or treated differently for reporting a concern in good faith or cooperating with an investigation. If that happens, report it — it's a separate violation." },
+          ]),
+          L("wc-dress-grooming", "Dress & Grooming", 3, "video", "The standard for the office, client meetings, and working remotely on camera.", [
+            { type: "p", text: "We're a business-casual office. The goal is simple: look like someone a client would trust with their marketing budget." },
+            { type: "h", text: "The standard" },
+            { type: "list", items: [
+              "Business casual, clean and in good repair — no rips, stains, or wrinkles.",
+              "Good personal hygiene and neat grooming.",
+              "Dress up for client meetings, pitches, and events — when in doubt, ask your manager what the client expects.",
+            ] },
+            { type: "callout", tone: "note", title: "Remote work counts", text: "If you're approved for remote work, the same business-casual standard applies — you're expected to keep your camera on for meetings, so dress for it." },
+            { type: "callout", tone: "tip", title: "Not sure?", text: "Ask your supervisor before the meeting, not after. It's a two-second question." },
+          ]),
+          L("wc-meeting-conduct", "Meeting Conduct", 3, "video", "How to show up to internal and client meetings — prepared, present, and on camera.", [
+            { type: "p", text: "Meetings are the most expensive thing we do — every one of them costs the whole room's time. Showing up well is a professional expectation, not a nicety." },
+            { type: "h", text: "Before the meeting" },
+            { type: "list", items: [
+              "Read the agenda and any linked docs. Come with your updates ready.",
+              "Test your audio, video, and screen share before a client call — not during it.",
+              "Join on time. If you'll be late or can't make it, say so in advance.",
+            ] },
+            { type: "h", text: "During the meeting" },
+            { type: "list", items: [
+              "Camera on unless there's a reason it can't be.",
+              "Mute when you're not speaking; find a quiet space with a clean background.",
+              "Stay present — no multitasking, email, or side work during client calls.",
+              "Let people finish. Use the chat or raise a hand rather than talking over someone.",
+            ] },
+            { type: "h", text: "After the meeting" },
+            { type: "steps", items: [
+              "Write down your action items and owners before you close the tab.",
+              "Send the client recap or follow-up you committed to, same day where possible.",
+            ] },
+            { type: "callout", tone: "tip", title: "Never surprise a client in a meeting", text: "If there's bad news — a missed deadline, a budget issue — flag it internally first so the team walks in aligned." },
+          ]),
+          L("wc-timeliness", "Timeliness", 3, "video", "Schedules, attendance, and deadlines — what we count on from each other.", [
+            { type: "p", text: "Timeliness is about being predictable. Your team and your clients plan around you, so the commitment matters more than the exact hours." },
+            { type: "h", text: "Your schedule" },
+            { type: "list", items: [
+              "The office is open 8:00am–6:00pm, Monday–Friday. You propose a weekly schedule within those hours and HR/Management approve it in advance.",
+              "Work the schedule you agreed to. Changing it is a conversation, not a same-day decision.",
+              "Overtime needs prior approval. Front-loading hours to take Fridays off isn't permitted outside approved summer hours.",
+            ] },
+            { type: "h", text: "Attendance & time off" },
+            { type: "steps", items: [
+              "Notify HR and your supervisor as early as possible when you'll be out.",
+              "Request the time in Gusto — a Slack message isn't a request.",
+              "For planned absences, arrange coverage first (see the Out of Office Coverage SOP).",
+            ] },
+            { type: "h", text: "Deadlines" },
+            { type: "list", items: [
+              "Deliver on the date you committed to, or renegotiate it before it passes.",
+              "Raise a slipping deadline early — a heads-up is manageable, a surprise isn't.",
+              "Check in and out on the Daily Check-in Channel if you're remote.",
+            ] },
+            { type: "callout", tone: "warn", title: "Excessive absenteeism", text: "Repeated tardiness or unexcused absence is grounds for corrective action under our standards of conduct." },
+          ]),
+        ]},
       ],
     },
     {
@@ -4285,6 +4400,30 @@ window.HUB_DATA = (function () {
   //     keyPoints: ["...", "..."],   // pulled from the lesson doc — the real important bits
   //   }
   const VIDEOS = {
+    "wc-bullying": {
+      videos: [ { title: "Bullying", url: "https://youtu.be/X-Fg9PSaAzg" } ],
+      showBody: true,
+    },
+    "wc-harassment": {
+      videos: [ { title: "Harassment", url: "https://youtu.be/ezSzbnTiqwQ" } ],
+      showBody: true,
+    },
+    "wc-reporting-concerns": {
+      videos: [ { title: "Reporting Workplace Concerns", url: "https://youtu.be/JUAiA5Z4MV8" } ],
+      showBody: true,
+    },
+    "wc-dress-grooming": {
+      videos: [ { title: "Dress & Grooming", url: "https://youtu.be/OTvHmG6-G88" } ],
+      showBody: true,
+    },
+    "wc-meeting-conduct": {
+      videos: [ { title: "Meeting Conduct", url: "https://youtu.be/lckXGdecufg" } ],
+      showBody: true,
+    },
+    "wc-timeliness": {
+      videos: [ { title: "Timeliness", url: "https://youtu.be/MCyJt4_LiEU" } ],
+      showBody: true,
+    },
     "co-pmax-expanded-urls": {
       videos: [ { title: "PMax Expanded Final URL Assets — Report & Settings", url: "https://www.loom.com/share/7fea339ea79e4e2ea378312319372270" } ],
       showBody: true,

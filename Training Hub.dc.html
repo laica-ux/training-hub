@@ -3518,10 +3518,17 @@ class Component extends DCLogic {
         u = u || '';
         let m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
         if (m) return { embed: 'https://www.youtube.com/embed/' + m[1] + '?rel=0&modestbranding=1', thumb: 'https://i.ytimg.com/vi/' + m[1] + '/hqdefault.jpg', embeddable: true, source: 'YouTube' };
+        m = u.match(/youtube\.com\/(?:playlist\?|embed\/videoseries\?)[^#]*\blist=([\w-]+)/);
+        if (m) {
+          const idx = (u.match(/[?&]index=(\d+)/) || [])[1];
+          return { embed: 'https://www.youtube.com/embed/videoseries?list=' + m[1] + '&rel=0&modestbranding=1' + (idx ? '&index=' + idx : ''), thumb: '', embeddable: true, source: 'YouTube' };
+        }
         m = u.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
         if (m) return { embed: 'https://www.loom.com/embed/' + m[1] + '?hideEmbedTopBar=true', thumb: 'https://cdn.loom.com/sessions/thumbnails/' + m[1] + '-with-play.gif', embeddable: true, source: 'Loom' };
         m = u.match(/vimeo\.com\/(\d+)/);
         if (m) return { embed: 'https://player.vimeo.com/video/' + m[1], thumb: '', embeddable: true, source: 'Vimeo' };
+        m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+        if (m) return { embed: 'https://drive.google.com/file/d/' + m[1] + '/preview', thumb: '', embeddable: true, source: 'Google Drive' };
         let host = '';
         try { host = new URL(u).hostname.replace(/^www\./, ''); } catch (e) {}
         const brands = {
