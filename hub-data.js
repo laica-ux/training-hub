@@ -3861,6 +3861,9 @@ window.HUB_DATA = (function () {
     "auto-extensions": [
       { title: "About Automated Assets", sub: "Google Ads Help article", url: "https://support.google.com/google-ads/answer/7175034?hl=en", type: "doc" },
     ],
+    "enhanced-conversions": [
+      { title: "ECL Upload Sheet Script", sub: "Script to use when building offline conversion upload sheets · Google Doc", url: "https://docs.google.com/document/d/1DDgmHO84cqd92UAVffei3c6aK-nLRJ1TaMgrZWViHmA/edit?usp=sharing", type: "doc" },
+    ],
     "enhanced-conversion-tracking": [
       { title: "Enhanced Conversions (Web) — Implementation Deck", sub: "Google's full 51-slide implementation guide · PDF", url: "https://drive.google.com/file/d/1XK-8ju_6x2-JjMkMjU6794y6avIS9cDM/view?usp=drive_link", type: "slides" },
     ],
