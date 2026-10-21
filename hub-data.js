@@ -5559,7 +5559,10 @@ window.HUB_DATA = (function () {
       ],
     },
     "enhanced-conversions": {
-      videos: [ { title: "Enhanced Conversions for Leads — Training", url: "https://fathom.video/share/9HxNxgEKYP1C_sGvvwfk-gsUryxx_XuS" } ],
+      videos: [
+        { title: "Enhanced Conversions for Leads — Training", url: "https://fathom.video/share/9HxNxgEKYP1C_sGvvwfk-gsUryxx_XuS" },
+        { title: "ECL Upload Sheets — Team Training (Oct 20, 2026)", url: "https://fathom.video/share/1qnbmUqsQPGoMMKVXQ9tZxEpexLDR59v" },
+      ],
       welcome: "Standard GCLID tracking has limits — ad blockers, iOS privacy, and CRM gaps cause conversions to go untracked. Enhanced Conversions for Leads (ECL) closes those gaps so your offline conversions report accurately.",
       keyPoints: [
         "ECL sends hashed first-party lead data back to Google to recover untracked conversions.",
