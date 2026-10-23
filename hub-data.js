@@ -2017,6 +2017,52 @@ window.HUB_DATA = (function () {
       ],
     },
     {
+      id: "google-updates", name: "Google Updates", icon: "megaphone", tint: "#c98a0c", tintSoft: "#fbf1d9",
+      blurb: "Time-sensitive news from Google — rep calls, product changes, and policy updates, grouped by month. Use these to stay current; once something is confirmed and lasting, it moves into an official PPC training.",
+      notice: { title: "Check the date before you act on it", text: "Google changes fast. Every update here is dated and reflects what we knew at that time — it may already be outdated. If you're unsure whether something still applies, confirm with the PPC team or the linked Google source." },
+      courses: [
+        { id: "gu-2026-10", title: "October 2026", summary: "Updates shared in October 2026.", lessons: [
+          L("gu-lsa-pmax-ppl-transition", "LSA → PMax Pay-Per-Lead: Migration & Changes", 6, "article", "From our Google LSA rep, Oct 23, 2026 — migration timeline, new features, ad format removals, and verification requirements. Relevant if you manage LSA accounts.", [
+            { type: "callout", tone: "warn", title: "Shared October 23, 2026", text: "This is what our Google LSA rep sent Kayley on this date. Timelines and features may have changed since — check the date and confirm before acting on it." },
+            { type: "p", text: "Google is moving Local Services Ads into Performance Max campaigns with pay-per-lead (PPL) goals. Here's what the rep told us to expect over the next few months." },
+            { type: "h", text: "Migration timeline" },
+            { type: "list", items: [
+              "MCC migrations happen in phases between mid-November and December 2026.",
+              "All verified US accounts under our MCC migrate together, except healthcare, locksmith, garage door, and insurance.",
+              "Google sends a detailed migration schedule in early November, then an automated reminder before each account's transition date.",
+            ] },
+            { type: "callout", tone: "note", title: "Our early-migration accounts", text: "The two accounts we requested for early migration weren't submitted by Google's deadline, so they'll move in the standard Nov–Dec window with everyone else." },
+            { type: "h", text: "New and upcoming features" },
+            { type: "list", items: [
+              "Already added to PMax PPL: booking support, bulk MCC editing, and Lead Manager improvements.",
+              "Coming: migration support for professional, healthcare, and locksmith/garage door verticals.",
+              "New CIDs with PMax PPL as the first campaign are rolling out only to brand-new Google Ads sign-ups. This doesn't affect MCCs or current customers.",
+              "Coming soon: adding PMax PPL campaigns to existing CIDs, and running multiple PMax PPL campaigns in one CID. Google will share best practices closer to launch.",
+              "API support for campaign creation and management is due by end of year.",
+            ] },
+            { type: "h", text: "New verticals" },
+            { type: "p", text: "Auto dealerships, rentals, grocery stores, and local retail are coming in the next few months. Most won't need extra verification and won't show a Google Verified badge. Final lists and timelines are still to come." },
+            { type: "h", text: "Ad format changes (LSA and PMax PPL)" },
+            { type: "list", items: [
+              "BBB callouts are removed from ads and the LSA UI. If a client relied on BBB, add alternative callouts.",
+              "Featured Professionals (\"At this business\") is removed from profile pages. Fieldworker photos and details like education are no longer collected.",
+              "\"Passed license check\" and \"passed background check\" callouts are removed.",
+              "Headshots are now optional. Professional verticals use uploaded headshots or general business photos.",
+              "Badges are removed from some verticals, including auto, beauty, and select education and wellness categories.",
+            ] },
+            { type: "h", text: "Verification changes" },
+            { type: "p", text: "Google now handles PMax PPL verification directly. If a client's Google Business Profile matches their Dun & Bradstreet record, registration completes automatically. If not, they'll need a business registration document and a D-U-N-S number." },
+            { type: "list", items: [
+              "Storefront (e.g., auto, beauty): only a verified, affiliated GBP. Service-area or hybrid setups also need business registration and affiliation.",
+              "Home services: business registration and business affiliation.",
+              "Professional services: business registration, affiliation, and applicable licenses (healthcare, legal, locksmith and garage door require AV).",
+            ] },
+            { type: "callout", tone: "tip", title: "Do this now", text: "Collect D-U-N-S numbers, business registration documents, and DBAs (if the GBP name differs from the registered name) for every LSA client, so migration and verification don't stall." },
+          ]),
+        ] },
+      ],
+    },
+    {
       id: "seo", name: "SEO", icon: "trend", tint: "#1f9e8f", tintSoft: "#e1f3f1",
       blurb: "From foundational concepts to technical execution and client reporting. Includes platform-specific training and sales enablement.",
       courses: [
@@ -3860,6 +3906,12 @@ window.HUB_DATA = (function () {
     ],
     "auto-extensions": [
       { title: "About Automated Assets", sub: "Google Ads Help article", url: "https://support.google.com/google-ads/answer/7175034?hl=en", type: "doc" },
+    ],
+    "gu-lsa-pmax-ppl-transition": [
+      { title: "LSA transition to PMax with pay-per-lead goals", sub: "Google Ads Help · what's changing and when", url: "https://support.google.com/google-ads/answer/17213585", type: "doc" },
+      { title: "PMax campaigns using pay-per-lead goals — all articles", sub: "Google Ads Help · full topic", url: "https://support.google.com/google-ads/topic/17213584", type: "doc" },
+      { title: "Screening & verification requirements for PMax pay-per-lead", sub: "Google Ads Help · requirements by business type", url: "https://support.google.com/google-ads/answer/18482079", type: "doc" },
+      { title: "Business screening & verification for pay-per-lead campaigns", sub: "Google Ads Help · D-U-N-S and registration", url: "https://support.google.com/google-ads/answer/18260066", type: "doc" },
     ],
     "enhanced-conversions": [
       { title: "ECL Upload Sheet Script", sub: "Script to use when building offline conversion upload sheets · Google Doc", url: "https://docs.google.com/document/d/1DDgmHO84cqd92UAVffei3c6aK-nLRJ1TaMgrZWViHmA/edit?usp=sharing", type: "doc" },
