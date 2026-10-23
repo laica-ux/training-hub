@@ -443,6 +443,64 @@ window.HUB_DATA = (function () {
           L("social-media-workflow", "Social Media Communication & Task Workflow", 8, "article", "How social work flows between the Account Manager and the Social team.", null),
           L("qc-social", "QCing Scheduled & Live Social Posts", 6, "checklist", "Catching failed posts fast and keeping clients informed.", null),
         ]},
+        { id: "offshore-team", title: "Offshore Team", summary: "Restricted · SOPs for hiring, managing, and offboarding offshore team members.", restrictTo: "offshore", lessons: [
+          Object.assign(L("offshore-hiring-offboarding", "Hiring & Offboarding Offshore Team Members", 8, "article", "The end-to-end process for bringing on and offboarding offshore team members. Opens the SOP in Google Docs.", [
+            { type: "p", text: "This SOP standardizes how we hire, manage, and offboard offshore team members — contractors, virtual assistants, and freelancers across GFF and SOS. It defines who approves, who owns each step, and how access is closed out." },
+            { type: "h", text: "Roles & responsibilities" },
+            { type: "list", items: [
+              "Executive approval (Katie Harris or Michael Johnson): final approval on every hire and every termination, plus oversight of role alignment, budget, and organizational impact.",
+              "Manager (department lead): identifies staffing needs, manages day-to-day performance and workload, approves contractor hours/pay bi-weekly, submits hiring and termination requests, and makes sure onboarding and offboarding steps are followed.",
+              "HR / Ops / Admin (onboarding owner): carries out approved hiring and offboarding, and manages system access, documentation, and records.",
+            ] },
+            { type: "h", text: "1 · Hiring authorization & approval" },
+            { type: "p", text: "Owner: Hiring Manager → Executive Approval (Katie Harris)." },
+            { type: "steps", items: [
+              "Department leads may identify the need for support — but no one may hire, contract, or onboard an offshore team member without approval.",
+              "Submit a Hiring Request Form with: role title and responsibilities, employment type (contractor, part-time, full-time), budget and pay rate, reporting manager, start date and expected duration (if contract-based), and payment method needed (e.g., Wise, direct deposit).",
+              "Katie Harris reviews and approves every hire — including all offshore and sub-contractors — before any offer is extended.",
+            ] },
+            { type: "callout", tone: "warn", title: "Approval must be documented", text: "Verbal approvals and informal Slack confirmations aren't enough. No work begins until approval is documented and confirmed via the Request Form." },
+            { type: "h", text: "2 · Hiring & onboarding execution" },
+            { type: "p", text: "Owner: HR / Ops / Admin." },
+            { type: "steps", items: [
+              "Issue the approved offer or contract.",
+              "Collect required documents through Gusto or another approved system: tax forms, direct deposit, and NDA/confidentiality agreements.",
+              "Grant access only to role-appropriate systems: email, Slack, ClickUp, HubSpot, Google Workspace, and any role-specific tools.",
+              "Alert Finance for payroll.",
+              "Assign a direct manager responsible for day-to-day oversight, training, performance feedback, and approving bi-weekly time/pay reports — which must happen before payment is issued.",
+            ] },
+            { type: "callout", tone: "note", title: "Default email setup", text: "Offshore team members get a free company Gmail account (e.g., firstname.companyname@gmail.com). Don't create paid domain email accounts without a clear business need and prior approval." },
+            { type: "h", text: "3 · Post-hire ownership" },
+            { type: "p", text: "Owner: Hiring Manager. Once onboarding is complete, ongoing management follows the Managing Support Team Members SOP. Any change to role scope, compensation, or employment status still has to be coordinated with HR / Ops." },
+            { type: "h", text: "4 · Termination & offboarding authorization" },
+            { type: "p", text: "Owner: Hiring Manager → Executive Approval (Katie Harris)." },
+            { type: "steps", items: [
+              "Submit a Termination / Offboarding Request Form with: reason (performance, role change, contract end, etc.), effective date, and risk level (standard or immediate).",
+              "Katie Harris approves every termination before it's carried out.",
+            ] },
+            { type: "callout", tone: "warn", title: "Immediate or high-risk terminations", text: "Follow the Emergency Lockout Protocol." },
+            { type: "h", text: "5 · Offboarding & access removal" },
+            { type: "p", text: "Owner: HR / Ops / Admin." },
+            { type: "steps", items: [
+              "Disable or revoke access to every system: email (have email admins delete Google Account passkeys), Slack, ClickUp, HubSpot, Google Workspace, and role-specific tools.",
+              "Update the Master Sheet for every system that needs to be disabled or cancelled.",
+              "Reassign tasks, accounts, and responsibilities.",
+              "Secure shared documents, passwords, and credentials, and confirm no client or internal access remains.",
+              "Document offboarding completion and update internal records and the HR calendar.",
+              "Notify relevant managers and leadership, and notify Finance of the final pay schedule.",
+            ] },
+            { type: "h", text: "Compliance & accountability" },
+            { type: "p", text: "This process protects the organization. Skipping it or applying it inconsistently leads to unauthorized hiring and onboarding, security and data-privacy exposure, and financial and budget impact." },
+            { type: "callout", tone: "warn", title: "No exceptions", text: "This SOP applies to every offshore support team member. Not following it means mandatory escalation to executive leadership for review and corrective action." },
+            { type: "h", text: "Resources" },
+            { type: "list", items: [
+              "Offshore Team Management sheet",
+              "Hiring Request Form",
+              "Termination / Offboarding Request Form",
+              "Emergency Lockout Protocol",
+            ] },
+          ]), { link: "https://docs.google.com/document/d/1vLjAhvEc-D5Uo8IIaVLPzHZSG48OEAPozrqvBYETwWc/edit?usp=sharing", linkType: "doc" }),
+        ]},
         { id: "onboarding-offboarding", title: "Onboarding & Offboarding", summary: "Bringing clients on and closing them out — cleanly and professionally.", lessons: [
           L("onboarding-fulfillment", "Onboarding & Fulfillment", 6, "article", "The post-onboarding meeting that aligns Fulfillment on scope and kickoff.", null),
           L("offboarding-closeout", "Offboarding & Closeout", 9, "article", "Handling cancellations with professionalism while protecting company assets.", null),
@@ -5775,5 +5833,17 @@ window.HUB_DATA = (function () {
   };
   const careerCrafts = [];
 
-  return { departments, startHere, recentlyUpdated, generic, team, careerLadders, leadershipLadder, careerCrafts, JD_FOLDER };
+  // Restricted courses: a course with restrictTo: "<key>" is shown only to emails on that list.
+  // Not real security (this file is public) — the linked Docs must be shared only with these people.
+  const ACCESS = {
+    offshore: [
+      "michael.t@getfoundfirst.com", "angie@getfoundfirst.com", "scampbellhr@gmail.com", "michael.j@getfoundfirst.com",
+      "hr@spotonsolutions.com", "hr@getfoundfirst.com", "atruman5@gmail.com", "angie@spotonsolutions.com",
+      "laica@spotonsolutions.com", "zach@spotonsolutions.com", "melanie@spotonsolutions.com", "paul@getfoundfirst.com",
+      "sierra@spotonsolutions.com", "katie.h@getfoundfirst.com", "jace@getfoundfirst.com", "sam@getfoundfirst.com",
+      "hayden@spotonsolutions.com",
+    ],
+  };
+
+  return { ACCESS, departments, startHere, recentlyUpdated, generic, team, careerLadders, leadershipLadder, careerCrafts, JD_FOLDER };
 })();

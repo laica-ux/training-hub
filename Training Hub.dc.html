@@ -1193,6 +1193,15 @@
       <div style="flex:1;">
         <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:700;font-size:34px;letter-spacing:-0.02em;color:#16181d;margin:2px 0 8px;">{{ deptName }}</h1>
         <p style="font-size:16.5px;color:#6b6f76;margin:0;max-width:780px;line-height:1.5;">{{ deptBlurb }}</p>
+        <sc-if value="{{ hasDeptNotice }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:12px;align-items:flex-start;margin-top:16px;max-width:780px;padding:14px 16px;border-radius:12px;background:#fdf6e3;border:1px solid #f0dfae;">
+            <div style="flex:none;margin-top:1px;">{{ deptNoticeIcon }}</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div style="font-size:14px;font-weight:700;color:#6b4e08;">{{ deptNoticeTitle }}</div>
+              <div style="font-size:14px;color:#5c4a1c;line-height:1.5;text-wrap:pretty;">{{ deptNoticeText }}</div>
+            </div>
+          </div>
+        </sc-if>
         <div style="display:flex;align-items:center;gap:14px;margin-top:18px;max-width:520px;">
           <div style="flex:1;height:8px;border-radius:5px;background:#e9e8e2;overflow:hidden;">
             <div style="height:100%;border-radius:5px;background:{{ deptTint }};width:{{ deptPct }}%;transition:width .4s;"></div>
@@ -1951,6 +1960,13 @@ class Component extends DCLogic {
       'laica@spotonsolutions.com',
     ];
   }
+  _canSee(c) {
+    if (!c || !c.restrictTo) return true;
+    if (!this.IS_DEMO) return true; // editor preview shows everything
+    const list = ((window.HUB_DATA || {}).ACCESS || {})[c.restrictTo] || [];
+    const e = ((this.USER && this.USER.email) || '').trim().toLowerCase();
+    return !!e && list.some(a => (a || '').trim().toLowerCase() === e);
+  }
   _isAdminEmail(email) {
     const e = (email || '').trim().toLowerCase();
     return this.ADMIN_EMAILS.some(a => (a || '').trim().toLowerCase() === e);
@@ -2050,7 +2066,7 @@ class Component extends DCLogic {
     const open = () => {
       const HD = window.HUB_DATA || {};
       const dept = (HD.departments || []).find(x => x.id === p[1]);
-      const course = dept && (dept.courses || []).find(x => x.id === p[2]);
+      const course = dept && (dept.courses || []).find(x => x.id === p[2] && this._canSee(x));
       const lesson = course && (course.lessons || []).find(x => x.id === p[3]);
       // A stale or mistyped link must land on home, never a blank lesson shell.
       const bail = () => { try { history.replaceState(this._navSnap(), '', window.location.pathname + window.location.search); } catch (e) {} };
@@ -2801,6 +2817,7 @@ class Component extends DCLogic {
     const raw = window.HUB_DATA;
     if (!raw) return [];
     const depts = JSON.parse(JSON.stringify(raw.departments));
+    depts.forEach(d => { d.courses = (d.courses || []).filter(c => this._canSee(c)); });
     const custom = this._custom();
     (custom.courses || []).forEach(nc => {
       const d = depts.find(x => x.id === nc.deptId);
@@ -3478,6 +3495,7 @@ class Component extends DCLogic {
             onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.goLesson(d.id, c.id, l.id); }
           })) }; });
       return Object.assign(base, { deptName: d.name, deptBlurb: d.blurb, deptTint: d.tint, deptTintSoft: d.tintSoft,
+        hasDeptNotice: !!d.notice, deptNoticeTitle: d.notice ? d.notice.title : '', deptNoticeText: d.notice ? d.notice.text : '', deptNoticeIcon: this.ic('bell', '#b07d12', 18),
         deptIconBig: this.ic(d.icon, d.tint, 30), deptPct: s.pct, deptProgressLabel: s.done + ' of ' + s.t + ' lessons',
         coursesLabel: d.courses.length + (d.courses.length === 1 ? ' Course' : ' Courses'), deptCourses });
     }
