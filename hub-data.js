@@ -438,10 +438,43 @@ window.HUB_DATA = (function () {
             ] },
             { type: "callout", tone: "note", title: "Why it matters", text: "An account secured to a personal phone locks the whole team out the moment that person is unreachable. Shared contacts keep the account ours, not an individual's." },
           ]), { link: "https://docs.google.com/document/d/13fTWhRC0NHqVT2fOTC2d5Bd6SKxS_1Uq6UYKL6BCdUI/edit?usp=sharing", linkType: "doc" }),
-          L("finance-process", "Finance Process Overview", 8, "article", "Closing billing gaps — from signed contract to accurate, on-time invoicing.", null),
           L("customer-escalations", "Customer Escalations", 8, "article", "What qualifies as an escalation and how to resolve it the right way.", null),
           L("social-media-workflow", "Social Media Communication & Task Workflow", 8, "article", "How social work flows between the Account Manager and the Social team.", null),
           L("qc-social", "QCing Scheduled & Live Social Posts", 6, "checklist", "Catching failed posts fast and keeping clients informed.", null),
+        ]},
+        { id: "billing-finance", title: "Billing & Finance", summary: "Invoicing, payment methods, and the AM responsibilities that keep billing accurate.", lessons: [
+          L("finance-process", "Finance Process Overview", 8, "article", "Closing billing gaps — from signed contract to accurate, on-time invoicing.", null),
+          L("billcom-portal", "Bill.com Invoicing & Customer Portal", 5, "video", "As of September 1st, our invoicing and payment processing runs through Bill.com — here's what clients see and how to point them to it.", [
+            { type: "p", text: "Our invoicing and payment processing moved to Bill.com as of September 1st. The change mostly affects the finance team and how we invoice and collect payment — the impact on you and our clients should be minimal, and it makes it much easier for clients to pay their invoices." },
+            { type: "h", text: "What the customer portal gives clients" },
+            { type: "list", items: [
+              "View invoices and invoice details, and pay directly on an invoice.",
+              "Update payment methods (credit card and bank/ACH) themselves — no need for us to manually receive their payment details.",
+              "Enroll in auto-pay.",
+              "Make a one-time payment without setting up auto-pay.",
+            ] },
+            { type: "h", text: "How to use it with clients" },
+            { type: "steps", items: [
+              "Share the Spot On Solutions customer portal link (below) with clients once they've been invoiced.",
+              "If a client wants to update their billing method for our monthly invoices, have them set up their Bill.com account when they're invoiced and add the payment method directly.",
+              "Use the Customer Portal Review video as your own reference — and feel free to share it with clients who ask how the portal works.",
+              "Direct any client billing questions to the finance team, and we'll field them.",
+            ] },
+            { type: "callout", tone: "tip", title: "Pinned in Slack", text: "The Bill.com update message is pinned in the channel for quick reference." },
+          ]),
+          L("payment-method-updates", "Updating Client Payment Methods", 4, "checklist", "How to handle a client's new card or bank info for Google Ads, Meta, and other ad platforms — by phone, never over PandaDoc.", [
+            { type: "p", text: "When a client needs to change the payment method (credit card, banking info, etc.) on an external platform like Google Ads or Meta, the Account Manager handles it directly with the client by phone." },
+            { type: "h", text: "The process" },
+            { type: "p", text: "Owner: the Account Manager. Call the client directly, then either:" },
+            { type: "steps", items: [
+              "Add the updated payment method directly to the appropriate platform(s) while you're on the phone with them, OR",
+              "Walk the client through updating the payment method themselves, from their point of view.",
+            ] },
+            { type: "callout", tone: "warn", title: "No payment info over PandaDoc", text: "PandaDoc no longer allows companies to collect payment information on their platform unless PandaDoc is also used for payment processing. To stay compliant, we no longer take payment methods of any kind over PandaDoc." },
+            { type: "h", text: "Payment method for our own invoices" },
+            { type: "p", text: "If a client wants to update how they pay our monthly invoices, that's handled through Bill.com — they set up their account when they're invoiced and add the payment method directly, or make a one-time payment. See the Bill.com Invoicing & Customer Portal lesson." },
+            { type: "callout", tone: "note", title: "Reminder", text: "Never send or request card or bank details via Slack or email — it's a PCI compliance violation." },
+          ]),
         ]},
         { id: "offshore-team", title: "Offshore Team", summary: "Restricted · SOPs for hiring, managing, and offboarding offshore team members.", restrictTo: "offshore", lessons: [
           Object.assign(L("offshore-hiring-offboarding", "Hiring & Offboarding Offshore Team Members", 8, "article", "The end-to-end process for bringing on and offboarding offshore team members. Opens the SOP in Google Docs.", [
@@ -2075,7 +2108,7 @@ window.HUB_DATA = (function () {
       ],
     },
     {
-      id: "google-updates", name: "Google Updates", icon: "megaphone", tint: "#c98a0c", tintSoft: "#fbf1d9",
+      id: "google-updates", name: "Google Updates", icon: "megaphone", tint: "#c98a0c", tintSoft: "#fbf1d9", itemNoun: "update",
       blurb: "Time-sensitive news from Google — rep calls, product changes, and policy updates, grouped by month. Use these to stay current; once something is confirmed and lasting, it moves into an official PPC training.",
       notice: { title: "Check the date before you act on it", text: "Google changes fast. Every update here is dated and reflects what we knew at that time — it may already be outdated. If you're unsure whether something still applies, confirm with the PPC team or the linked Google source." },
       courses: [
@@ -3994,6 +4027,10 @@ window.HUB_DATA = (function () {
     "social-media-workflow": [
       { title: "Social Media Checklist", sub: "Day-to-day social workflow checklist · Google Doc", url: "https://docs.google.com/document/d/1VABE2cqzEnExWTXS0FeqqNGuw5Gsj0oqodOkfsZ978I/edit?usp=sharing", type: "doc" },
     ],
+    "billcom-portal": [
+      { title: "Spot On Solutions – Customer Portal", sub: "Bill.com customer portal · share with clients", url: "https://app01.us.bill.com/p/spotonsolutions", type: "doc" },
+      { title: "Customer Portal Review", sub: "Loom walkthrough · shareable with clients", url: "https://www.loom.com/share/aabbc915f7544d21b3cac74da7c43c9c", type: "doc" },
+    ],
     "finance-process": [
       { title: "Client Budget Doc", sub: "Client budget tracking · Google Drive file", url: "https://drive.google.com/file/d/1tZoZ_CqIO_iFJgpafE_jQrjGYxYjBmqH/view?usp=sharing", type: "file" },
     ],
@@ -4223,12 +4260,11 @@ window.HUB_DATA = (function () {
       { type: "callout", tone: "tip", title: "If a client asks about AI", text: "\u201cWe use trusted tools like ChatGPT and Claude to support research, brainstorming, and strategy development — but every deliverable is reviewed and refined by an expert.\u201d If a client requests no AI, note it in HubSpot, notify the AI Lead, and update the team in Slack." },
     ],
     "internal-ops": [
-      { type: "p", text: "This is where you look when you're unsure how something gets done around here. The Operating Procedures course collects our day-to-day SOPs — coverage when someone's out, file ownership, finance and billing, customer escalations, and the social media workflow." },
+      { type: "p", text: "This is where you look when you're unsure how something gets done around here. The Operating Procedures course collects our day-to-day SOPs — coverage when someone's out, file ownership, customer escalations, and the social media workflow. Billing and finance SOPs now live in their own Billing & Finance course." },
       { type: "list", items: [
         "Out of Office Coverage — plan and verify coverage before any absence.",
         "Client Account Security & 2FA — shared recovery contacts so access never depends on one person.",
         "Team File Management & Ownership — how we name, store, and own shared files.",
-        "Finance Process Overview — the AM responsibilities that keep billing accurate.",
         "Customer Escalations — what qualifies and how to resolve it.",
         "Social Media Communication & Task Workflow, and QCing social posts.",
       ] },
@@ -4513,6 +4549,10 @@ window.HUB_DATA = (function () {
   //     keyPoints: ["...", "..."],   // pulled from the lesson doc — the real important bits
   //   }
   const VIDEOS = {
+    "billcom-portal": {
+      videos: [ { title: "Bill.com Customer Portal Review", url: "https://www.loom.com/share/aabbc915f7544d21b3cac74da7c43c9c" } ],
+      showBody: true,
+    },
     "wc-bullying": {
       videos: [ { title: "Bullying", url: "https://youtu.be/X-Fg9PSaAzg" } ],
       showBody: true,
