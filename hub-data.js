@@ -563,6 +563,38 @@ window.HUB_DATA = (function () {
           L("ai-prompt", "AI Prompt Training", 5, "article", "Crafting clear prompts that get the results you actually want.", null),
           L("enhanced-conversions", "Enhanced Conversions for Leads", 6, "video", "What ECL is, why it matters, and how to set it up end to end.", null),
           L("flywheel-friction", "Flywheel & Friction", 5, "article", "Leadership training on building momentum and removing friction.", null),
+          Object.assign(L("is-google-dying", "Is Google Dying? A History of Adapting to Change", 20, "article", "How Google has handled every platform shift so far, why AI is different, and how to answer a client who says Google is dying.", [
+            { type: "p", text: "Clients keep hearing that AI assistants will replace search and that Google Ads budgets are wasted money. This training doesn't defend Google. It looks at how Google has actually handled past threats to its business, why the AI shift may be different, and what that means for the restoration and home service clients we serve." },
+            { type: "h", text: "The pattern" },
+            { type: "steps", items: [
+              "Consumer behavior changes: people start spending time somewhere new.",
+              "A new platform emerges: mobile, video, the browser, the home, AI.",
+              "Google responds by buying, building, or investing. Sometimes all three.",
+              "Google repositions to stay in front of where attention went.",
+            ] },
+            { type: "list", items: [
+              "2005 Android: you don't have to own the device, you have to be the default on it.",
+              "2006 YouTube: Google admitted its own Google Video lost and bought the winner.",
+              "2007 DoubleClick: Google stopped being paid only when someone typed into a search bar.",
+              "2008 Chrome: built in house. When it has to, Google builds.",
+              "2015 Local Services Ads: Google went after Angi, HomeAdvisor, and Thumbtack's lead business in our clients' category.",
+              "2017 YouTube TV and 2018 DV360: following viewers off cable, and rebuilding the ad stack it already owned.",
+              "2014 DeepMind to 2023 Gemini: Google invented the Transformer (the T in GPT) but still got caught flat-footed on the product.",
+            ] },
+            { type: "callout", tone: "warn", title: "Current changes to know", text: "The Google Guarantee badge was retired in late 2025 and replaced by Google Verified. Local Services Ads are moving into Google Ads as Performance Max with pay-per-lead goals, starting August 2026 for U.S. home services. Pull historical LSA reports before an account migrates." },
+            { type: "h", text: "The honest view" },
+            { type: "p", text: "Google is well positioned: twenty years of adapting, unmatched distribution, huge capital, and a decade of AI research. But AI answers can reduce clicks, habits can move to other assistants, and monetizing AI answers is unsolved. Google has also lost bets: Google+, Stadia, Glass, and Nest underperformed. Adaptation is not guaranteed success." },
+            { type: "h", text: "Answering a client who wants to pull spend" },
+            { type: "steps", items: [
+              "Agree that AI is changing behavior. Argue with the premise and the conversation is over.",
+              "Use the history to explain why Google isn't fragile.",
+              "Don't guarantee anything about Google's future.",
+              "Pivot to this client's cost per lead and booked jobs.",
+              "Propose a funded test with a budget and a window, not pulling the whole budget.",
+            ] },
+            { type: "callout", tone: "tip", title: "Follow the customer, not the platform", text: "A homeowner standing in two inches of water still needs a qualified company on site today. Only the way they look for one is changing. Sound like an advisor, not a Google rep, and make every call with the client's own data in front of you." },
+            { type: "callout", tone: "note", title: "When quoting numbers", text: "Label the period (“Alphabet's Q2 2026, company reported”). We don't yet have reliable data that AI-referred traffic converts like search in our verticals. Say that plainly if asked." },
+          ]), { link: "https://docs.google.com/presentation/d/1SxFG-7Mmd6AGM00CK9u7PQqjRJZnoNf1/edit?usp=sharing&ouid=105424128686857706659&rtpof=true&sd=true", linkType: "slides" }),
         ]},
         { id: "leadership", title: "Leadership Development", summary: "For team leads, managers, and anyone on a leadership track.", lessons: [
           Object.assign(L("first-90-days", "Your First 90 Days as a Leader", 12, "article", "A structured plan for the first 90 days in a leadership role.", null), { link: "https://docs.google.com/document/d/1bTYpLK76P1OXiBLPPIh1_z7iqDxzY-zVvGVbuiTDtLs/edit?usp=sharing", linkType: "doc", deepTitle: "Go deeper — First 90 Days checklist in Drive", resources: [
