@@ -38,6 +38,8 @@ window.HUB_DATA = (function () {
     ] },
   ]);
 
+  const WB = [ { type: "file", title: "Trusted Digital Media Advisor · Participant Workbook", sub: "PDF · bring it to every session", url: "assets/trusted-digital-media-advisor-workbook.pdf" } ];
+
   const departments = [
     {
       id: "people-policy", name: "People & Policy", icon: "people", tint: "#3b6cf5", tintSoft: "#e8eefe",
@@ -60,6 +62,7 @@ window.HUB_DATA = (function () {
               "General Policies & Guidelines — the day-to-day rules.",
               "Timekeeping & Payroll — logging hours and time-off requests.",
             ] },
+            { type: "callout", tone: "warn", title: "Client-facing roles", text: "Complete Client Advisor Training (in PPC, SEO, or Social) before you take on client calls." },
           ]), { trainerMaterials: [
             { type: "deck", title: "Introduction to Training — Slide Deck", url: "https://docs.google.com/presentation/d/12aTWRiy_DgacW8PY6DouY0TXIkLp-gMJ5UbordZDLsI/edit?usp=sharing" },
             { type: "guide", title: "Introduction to Training — Trainer's Guide", url: "https://docs.google.com/document/d/1eWjSThP0HChE9WVsq4gWpuQTj_rWUcdEwCXbEKis_qo/edit?usp=drive_link" },
@@ -776,6 +779,140 @@ window.HUB_DATA = (function () {
               "YouTube Ads — ads on YouTube, including in-stream, video discovery, and bumper ads.",
             ] },
           ]),
+        ]},
+        { id: "client-advisor", title: "Client Advisor Training", summary: "MJ's Trusted Digital Media Advisor program for every client-facing role (PPC, SEO, and Social): three sessions to complete before taking on client calls. Workbook included.", lessons: [
+          Object.assign(L("tdma-overview", "Trusted Digital Media Advisor: Program Overview", 8, "article", "MJ's mandatory three-session training that turns account managers from reporters into advisors clients won't leave. Start here and grab the workbook.", [
+            { type: "p", text: "Trusted Digital Media Advisor is a mandatory, company-wide training put together by MJ. It runs as three weekly sessions and is built on the Google Partners program GFF grew up inside, updated with what 3,615 of our own client calls actually say." },
+            { type: "callout", tone: "note", title: "Who this is for", text: "Everyone in a client-facing role: PPC, SEO, and Social. You'll find it in PPC, SEO, and Social. It's the same training, so completing it in one place marks it done everywhere." },
+            { type: "callout", tone: "warn", title: "Before Session 1", text: "Download the Participant Workbook (linked below), pick ONE account to carry through all three sessions, and write it on the cover. Every exercise applies to that account. New and don't have clients yet? Use a practice account from your manager." },
+            { type: "h", text: "The framework at a glance" },
+            { type: "list", items: [
+              "Identity: you are a Trusted Digital Media Advisor, someone who extracts meaning from the clutter and steers a business to competitive advantage.",
+              "Operating system: the Trust Equation.",
+              "Call process: PLAN, OPEN, IDENTIFY, RECOMMEND, CLOSE.",
+              "Mechanism: insight-led account planning. You supply direction; you don't wait to be asked.",
+              "The edge: the proactive save, paired with our AI flagging. Catch it before the client sees it.",
+            ] },
+            { type: "h", text: "The three sessions" },
+            { type: "steps", items: [
+              "Session 1 · Diagnose the Trust Gap (PLAN and OPEN): the Trust Equation, trust gap vs. competence gap, and opening calls with POINT.",
+              "Session 2 · Build the Insight, Lead the QBR (IDENTIFY and RECOMMEND): the one-page account plan, So What / Now What, and LFBB.",
+              "Session 3 · Hold the Line Under Pressure (CLOSE): the five-step objection method, churn tells, and the save play.",
+            ] },
+            { type: "h", text: "How each session works" },
+            { type: "list", items: [
+              "Every hour runs Open, Teach, Practice, Commit. Expect more time in roleplay than in notes.",
+              "Fill in the teach pages yourself. Writing it in your own words is what makes it stick.",
+              "Debrief rule in every drill: self-assess first, then one behavioral fix. Point to the exact sentence, not a vibe.",
+              "The homework page goes to your manager 1:1.",
+            ] },
+            { type: "callout", tone: "tip", title: "Where the learning really happens", text: "The sessions are the formal 10%. 70% is applying it on your live accounts, and 20% is a short roleplay on a live account issue in your weekly manager 1:1." },
+            { type: "callout", tone: "note", title: "Self-assessment", text: "Rate yourself on the workbook's self-assessment page before Session 1, then again after Session 3 to see what moved." },
+          ]), { resources: WB }),
+          Object.assign(L("tdma-1", "Session 1: Diagnose the Trust Gap", 60, "article", "The Trust Equation, telling a trust gap from a competence gap, and opening calls the client buys into.", [
+            { type: "p", text: "Objectives: explain the Trust Equation, tell a trust gap from a competence gap, and open a call that earns buy-in. Call process: PLAN and OPEN." },
+            { type: "h", text: "Vendor vs. advisor" },
+            { type: "list", items: [
+              "A vendor reports the metrics. An advisor reads the business.",
+              "A vendor waits to be asked. An advisor brings the plan.",
+              "A vendor defends the work. An advisor owns the recommendation.",
+              "A vendor is interchangeable. An advisor is irreplaceable.",
+            ] },
+            { type: "h", text: "The Trust Equation" },
+            { type: "p", text: "Trust = (Credibility + Reliability + Intimacy) ÷ Self-Orientation. Credibility: do my words hold up? Reliability: do I do what I said? Intimacy: will they tell me the real problem? Self-orientation: does this read as about their goal or my retainer?" },
+            { type: "callout", tone: "tip", title: "Master move", text: "Lower your self-orientation: \u201cHere is what I would do if this were my own budget.\u201d Any whiff of \u201cthis is about your retainer\u201d collapses the other three." },
+            { type: "h", text: "Trust gap vs. competence gap" },
+            { type: "list", items: [
+              "Competence gap: the numbers are actually off. Fix the work.",
+              "Trust gap: the numbers may be fine, but they feel unheard, surprised, or deprioritized. Fix the relationship.",
+              "Early-warning signals: cadence slipping, slower replies, postponed QBRs, \u201chold steady\u201d budget language, a new name on the ad account, a champion leaving.",
+            ] },
+            { type: "h", text: "Plan and open (POINT)" },
+            { type: "p", text: "Before the call, do your homework and define success in the client's terms. If you can't state the client's Purpose, you're not ready. Then open with POINT:" },
+            { type: "steps", items: [
+              "Purpose: why we're meeting, in the client's terms.",
+              "Outline: what we'll cover.",
+              "Input: invite them to add to the agenda.",
+              "Transition: move into the conversation.",
+            ] },
+            { type: "h", text: "Between-session task" },
+            { type: "p", text: "Run the Trust Equation diagnostic on your carried account (workbook Session 1 pages) and bring it to your manager 1:1." },
+          ]), { resources: WB }),
+          Object.assign(L("trusted-digital-advisor-2", "Session 2: Build the Insight, Lead the QBR", 62, "video", "Mandatory, company-wide (recorded Nov 11): leading strategic client reviews (QBRs/MBRs) that build trust and drive account growth.", [
+            { type: "callout", tone: "warn", title: "Mandatory training", text: "Recorded November 11. Every client-facing team member should watch the full session and complete the Session 2 pages of the Participant Workbook (linked below)." },
+            { type: "h", text: "Why clients cancel" },
+            { type: "list", items: [
+              "Clients don't leave only over poor performance. They leave when they don't see a strategic plan to fix it.",
+              "Performance dips are inevitable. Your value is having a clear solution ready when they happen.",
+              "Trust Equation: (Credibility + Reliability + Intimacy) ÷ Self-Orientation. Keep self-orientation low by focusing on the client's business, not yours.",
+            ] },
+            { type: "h", text: "Leading strategic reviews" },
+            { type: "list", items: [
+              "QBR (Quarterly Business Review): a formal, longer-term strategic review for all clients.",
+              "MBR (Monthly Business Review): replaces the QBR for high-spend clients ($50k–$100k+/mo).",
+              "The goal is to lead on direction, not report past data: where is the client now, where do you want to take them, and what's the roadmap?",
+            ] },
+            { type: "h", text: "Building the account plan (MTN)" },
+            { type: "steps", items: [
+              "Metrics That Matter: narrow 400+ available metrics down to the few that drive the client's goal.",
+              "Goal: define the client's primary objective, e.g. lead volume vs. efficiency.",
+              "White Space: find the path of least resistance. Volume levers are budget, tactics, and targeting. Efficiency levers are conversion rate (landing pages), CPC (Quality Score), and waste (negatives).",
+              "Strategic Initiatives: distill the plan into 1–2 key actions for the next period.",
+            ] },
+            { type: "h", text: "Presenting with LFBB" },
+            { type: "steps", items: [
+              "Link: restate the client's goal.",
+              "Feature: present your strategic plan.",
+              "Bridge: connect the plan to the client's business.",
+              "Benefit: explain the positive outcome for the client.",
+            ] },
+            { type: "h", text: "The “star moment”" },
+            { type: "p", text: "Deliver one memorable insight per review. In priority order:" },
+            { type: "steps", items: [
+              "Urgency: address a critical performance issue.",
+              "Competitive pressure: show a competitor's impact.",
+              "Business goal: tie an insight directly to their objectives.",
+            ] },
+            { type: "h", text: "From the role-play" },
+            { type: "list", items: [
+              "Keep the plan simple: 1–2 initiatives (e.g. a PMax campaign and a landing page) are easier for clients to buy into.",
+              "Ask deeper questions to find the real issue, e.g. a low close rate vs. low lead volume.",
+              "Flag issues outside your scope (like website UX) to show partnership.",
+              "Simplify and repeat key points. Clients are busy and distracted.",
+            ] },
+            { type: "callout", tone: "tip", title: "Before your next review", text: "Come prepared with 1–2 key initiatives and one star-moment insight, structure recommendations with LFBB, and raise performance issues before the client does." },
+            { type: "h", text: "Between-session task" },
+            { type: "p", text: "Draft the one-page account plan for your carried account (workbook Session 2 pages). Your manager co-reviews it in your 1:1 before it goes live." },
+            { type: "callout", tone: "note", title: "Coming up next", text: "Session 3 covers holding the line under pressure: objections, churn signals, and the save play." },
+          ]), { resources: WB }),
+          Object.assign(L("tdma-3", "Session 3: Hold the Line Under Pressure", 60, "article", "Handling hard objections, spotting churn tells early, and running the save play.", [
+            { type: "p", text: "Objectives: build and deliver a proactive early-warning conversation, handle the hard objection, and close on a next step. Call process: CLOSE." },
+            { type: "h", text: "The five-step objection method" },
+            { type: "steps", items: [
+              "Listen: don't interrupt.",
+              "Clarify: \u201cHelp me understand that.\u201d",
+              "Restate: play it back.",
+              "Cushion: soften and show you heard it.",
+              "Respond: address the real issue, then pause.",
+            ] },
+            { type: "callout", tone: "note", title: "Then close", text: "\u201cThank you\u201d is not a close. A close is a specific next step: Direct (\u201cCan we increase to the new number?\u201d), Assumptive (\u201cI will send the plan this afternoon\u201d), or Alternate Choice (\u201cTuesday or Wednesday?\u201d). Pre-decide your two most likely closes and send a written recap after every call." },
+            { type: "h", text: "Churn tells that earn a same-week call" },
+            { type: "list", items: [
+              "\u201cHold steady,\u201d \u201creallocate,\u201d \u201cpause,\u201d \u201clet me think about it.\u201d",
+              "A champion leaving, or a new name on the ad account.",
+              "Slower replies, postponed QBRs, trialing another agency.",
+              "An ultimatum: \u201cI can't continue with the same results.\u201d",
+            ] },
+            { type: "h", text: "The save play" },
+            { type: "steps", items: [
+              "Why is it on fire? Trust, results, budget, or contact loss.",
+              "How do we put it out? One move, one owner, one date.",
+              "Check back at two weeks and one month until it's green.",
+            ] },
+            { type: "callout", tone: "tip", title: "Get ahead of it", text: "Your AI agent flags the risk; you pre-frame it before the client notices." },
+            { type: "h", text: "Between-session task" },
+            { type: "p", text: "Have one real early-warning or save conversation on a named account within two weeks, then retake the workbook self-assessment." },
+          ]), { resources: WB }),
         ]},
         { id: "ppc-account-setup-mod", title: "Account Setup & Access", summary: "Getting into accounts the right way — navigation, account creation, MCC linking, billing, and Local Services Ads.", lessons: [
           L("ppc-as-navigation", "Ad Platform Navigation", 8, "video", "Logging into Google Ads and Microsoft Advertising and finding your way around the interface.", [
@@ -2273,6 +2410,7 @@ window.HUB_DATA = (function () {
             { type: "p", text: "Grouping related keywords and content into themed \"silos\" — with consistent URLs and internal linking — builds topical authority and helps search engines understand a site's themes." },
             { type: "h", text: "Local vs. national SEO" },
             { type: "list", items: ["Local — geo-targeted keywords, an optimized Google Business Profile, reviews, and local links; vital for brick-and-mortar and service-area businesses.", "National — broad, competitive keywords, wide-scale link building, and content marketing; for businesses with a country-wide audience."] },
+            { type: "callout", tone: "warn", title: "Before you take on client calls", text: "Complete Client Advisor Training (the first card in SEO). It's required for every client-facing role, including SEO, and covers building trust, leading strategic reviews, and saving at-risk accounts." },
           ]),
           L("seo-faqs", "Common SEO FAQs", 8, "article", "Quick answers to the questions clients and new team members ask most about SEO.", [
             { type: "p", text: "A living reference of the SEO questions clients and new team members ask most — from how long results take to how we judge a backlink — with the straight answers we give. The full, continually updated list is in the doc below." },
@@ -2694,6 +2832,7 @@ window.HUB_DATA = (function () {
             ] },
             { type: "p", text: "The most common platforms we use are Facebook, Instagram, and LinkedIn." },
             { type: "callout", tone: "tip", title: "The big takeaway", text: "Each platform has its own strengths, weaknesses, and audience. Understand the client's business objectives and target audience first, then focus effort on the most relevant platforms." },
+            { type: "callout", tone: "warn", title: "Before you take on client calls", text: "Complete Client Advisor Training (the next card, right after Intro to Social Media). It's required for every client-facing role, including Social, and covers building trust, leading strategic reviews, and saving at-risk accounts." },
           ]),
           L("social-organic-paid", "Social Media: Organic vs Paid", 10, "article", "The difference between organic and paid social — the content types, the elements of a paid campaign, and the metrics that matter for each.", [
             { type: "h", text: "What is social media marketing?" },
@@ -4581,6 +4720,16 @@ window.HUB_DATA = (function () {
   //     keyPoints: ["...", "..."],   // pulled from the lesson doc — the real important bits
   //   }
   const VIDEOS = {
+    "trusted-digital-advisor-2": {
+      videos: [ { title: "Client Advisor Training · Session 2 (Nov 11)", url: "https://fathom.video/share/ocTbkfyyLzWJ5yxkQXnNw4UVsQorKdWW" } ],
+      keyPoints: [
+        "Address performance issues before the client does. It positions you as a strategic partner, not a reactive vendor.",
+        "Shift reviews from reporting past data to defining the future: where is the client, and where do you want to take them?",
+        "Structure recommendations with LFBB (Link, Feature, Bridge, Benefit) to tie your plan to the client's goals.",
+        "Deliver one “star moment” per review: urgency first, then competitive pressure, then a direct link to business goals.",
+      ],
+      showBody: true,
+    },
     "billcom-portal": {
       videos: [ { title: "Bill.com Customer Portal Review", url: "https://www.loom.com/share/aabbc915f7544d21b3cac74da7c43c9c" } ],
       showBody: true,
@@ -5638,6 +5787,7 @@ window.HUB_DATA = (function () {
         "These 90 days are about getting confident and connected — not memorizing everything.",
         "Stuck? Slack your manager or onboarding buddy, or ask in #general.",
         "Read the Employee Handbook early — it answers most policy questions.",
+        "Client-facing role? Complete Client Advisor Training (in PPC, SEO, or Social) before you take on client calls.",
       ],
       assessments: [
         { label: "90-Day: Self Assessment", meta: "Self-check · reflect on your progress", url: "https://docs.google.com/document/d/1iF7dNYWnqq_serYdyQLSuFylVtATPKmG-5YCCB1U3J8/edit?usp=drive_link" },
@@ -5828,12 +5978,27 @@ window.HUB_DATA = (function () {
     { name: "Casey Bloom", role: "Web Developer", track: "web-dev", workspace: "GFF", done: 2, total: 24, pct: 8, lastActive: "1w ago", status: "behind" },
   ];
 
+  // Client Advisor Training lives in PPC but is shared into SEO (1st) and Social (after Intro to Social Media).
+  // Same lessons, so completing it anywhere marks it done everywhere.
+  (function () {
+    const dep = (id) => departments.find(d => d.id === id);
+    const ca = dep("ppc") && dep("ppc").courses.find(c => c.id === "client-advisor");
+    if (!ca) return;
+    const seo = dep("seo");
+    if (seo) seo.courses.unshift(ca);
+    const social = dep("social");
+    if (social) {
+      const i = social.courses.findIndex(c => c.id === "social-intro");
+      social.courses.splice(i >= 0 ? i + 1 : 0, 0, ca);
+    }
+  })();
+
   // Curated "Start here" — the catalog's START HERE intros + onboarding.
   const startHere = [
     { deptId: "people-policy", courseId: "onboarding", lessonId: "onboarding-90day" },
     { deptId: "people-policy", courseId: "human-resources", lessonId: "employee-handbook" },
     { deptId: "people-policy", courseId: "human-resources", lessonId: "timekeeping" },
-    { deptId: "sops", courseId: "company-tools", lessonId: "slack" },
+    { deptId: "ppc", courseId: "client-advisor", lessonId: "tdma-overview", title: "Client Advisor Training" },
     { deptId: "ppc", courseId: "intro-to-ppc", lessonId: "intro-digital-advertising" },
     { deptId: "seo", courseId: "seo-intro", lessonId: "intro-seo" },
   ];

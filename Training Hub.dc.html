@@ -3251,7 +3251,7 @@ class Component extends DCLogic {
       const departments = depts.map(d => {
         const s = this._deptStats(d); const nC = d.courses.length, nL = this._allLessons(d);
         return { name: d.name, tint: d.tint, tintSoft: d.tintSoft, iconEl: this.ic(d.icon, d.tint, 22),
-          meta: nC + (nC === 1 ? ' course · ' : ' courses · ') + nL + (nL === 1 ? ' lesson' : ' lessons'),
+          meta: nC + (nC === 1 ? ' course · ' : ' courses · ') + nL + ' ' + (nL === 1 ? (d.itemNoun || 'lesson') : (d.itemNoun || 'lesson') + 's'),
           pct: s.pct, pctLabel: s.done > 0 ? s.pct + '%' : 'Start', onClick: () => this.goDept(d.id) };
       });
 
@@ -3261,7 +3261,7 @@ class Component extends DCLogic {
         const l = c && c.lessons.find(x => x.id === ref.lessonId);
         if (!l) return null;
         shMin += l.minutes || 0;
-        return { title: l.title, tint: d.tint, tintSoft: d.tintSoft, iconEl: this.ic(d.icon, d.tint, 18),
+        return { title: ref.title || l.title, tint: d.tint, tintSoft: d.tintSoft, iconEl: this.ic(d.icon, d.tint, 18),
           tag: d.name, meta: this._kindLabel(l.kind) + ' · ' + l.minutes + ' min', minLabel: l.minutes + ' min',
           done: !!this.state.completed[l.id], checkEl: this.statusDot(true, '#34d27b'),
           onClick: () => this.goLesson(d.id, c.id, l.id) };
@@ -3487,7 +3487,7 @@ class Component extends DCLogic {
           showLessons: this.state.hoverCourse === c.id,
           onEnter: () => this.setState({ hoverCourse: c.id }),
           onLeave: () => this.setState({ hoverCourse: null }),
-          lessonsLabel: c.lessons.length + (c.lessons.length === 1 ? ' lesson' : ' lessons'),
+          lessonsLabel: c.lessons.length + ' ' + (c.lessons.length === 1 ? (d.itemNoun || 'lesson') : (d.itemNoun || 'lesson') + 's'),
           lessons: c.lessons.map(l => ({
             title: l.title,
             kindIconEl: this._kindIcon(l.kind, d.tint, 15),
@@ -3496,7 +3496,7 @@ class Component extends DCLogic {
           })) }; });
       return Object.assign(base, { deptName: d.name, deptBlurb: d.blurb, deptTint: d.tint, deptTintSoft: d.tintSoft,
         hasDeptNotice: !!d.notice, deptNoticeTitle: d.notice ? d.notice.title : '', deptNoticeText: d.notice ? d.notice.text : '', deptNoticeIcon: this.ic('bell', '#b07d12', 18),
-        deptIconBig: this.ic(d.icon, d.tint, 30), deptPct: s.pct, deptProgressLabel: s.done + ' of ' + s.t + ' lessons',
+        deptIconBig: this.ic(d.icon, d.tint, 30), deptPct: s.pct, deptProgressLabel: s.done + ' of ' + s.t + ' ' + (d.itemNoun || 'lesson') + 's',
         coursesLabel: d.courses.length + (d.courses.length === 1 ? ' Course' : ' Courses'), deptCourses });
     }
 
