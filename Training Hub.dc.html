@@ -3543,6 +3543,8 @@ class Component extends DCLogic {
         }
         m = u.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
         if (m) return { embed: 'https://www.loom.com/embed/' + m[1] + '?hideEmbedTopBar=true', thumb: 'https://cdn.loom.com/sessions/thumbnails/' + m[1] + '-with-play.gif', embeddable: true, source: 'Loom' };
+        m = u.match(/fathom\.video\/(?:share|embed)\/([\w-]+)/);
+        if (m) return { embed: 'https://fathom.video/embed/' + m[1], thumb: '', embeddable: true, source: 'Fathom' };
         m = u.match(/vimeo\.com\/(\d+)/);
         if (m) return { embed: 'https://player.vimeo.com/video/' + m[1], thumb: '', embeddable: true, source: 'Vimeo' };
         m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
